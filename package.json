@@ -1,0 +1,27 @@
+{
+  "name": "reprograma_teste_proj",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon ./server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Larissayk/reprograma_teste_proj.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Larissayk/reprograma_teste_proj/issues"
+  },
+  "homepage": "https://github.com/Larissayk/reprograma_teste_proj#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.7.11"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4"
+  }
+}
