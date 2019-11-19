@@ -5,7 +5,7 @@ const app = express();
 //conversor
 app.use(express.json());
 
-//conexão com o MongoDB
+//conexão com o MongoDB Bco Usuarios
 mongoose.connect("mongodb://localhost:27017/usuarios", {
   useNewUrlParser: true
 });
@@ -29,8 +29,10 @@ app.use(function(req, res, next) {
 // rotas
 const index = require("./routes/index");
 const usuarios = require("./routes/usuariosRoute");
+const publicacoes = require("./routes/publicacoesRoute");
 
 app.use("/", index);
 app.use("/usuarios", usuarios);
+app.use("/publicacoes", publicacoes);
 
 module.exports = app;
