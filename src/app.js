@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 //conexão com o MongoDB Bco Usuarios
-mongoose.connect("mongodb://localhost:27017/usuarios", {
+mongoose.connect("mongodb://localhost:27017/proj_reprograma", {
   useNewUrlParser: true
 });
 

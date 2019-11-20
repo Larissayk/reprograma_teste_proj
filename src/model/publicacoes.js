@@ -2,8 +2,9 @@ const mongoose = require("mongoose");
 
 const publicacoesSchema = new mongoose.Schema(
   {
-    titulo: { type: String },  //
+    titulo: { type: String }, 
     descricao: { type: String },
+    categoria: {type:String},
     valor: { type: Number }
   },
   { versionKey: false }
