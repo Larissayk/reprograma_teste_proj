@@ -1,4 +1,5 @@
 const Usuarios = require("../model/usuarios");
+const objectId = require("mongodb").ObjectID;
 
 //GET
 
@@ -16,6 +17,11 @@ exports.getUsuariosPorId = (req, res) => {
   //   console.log(usuarioId);
   Usuarios.find({ _id: usuarioId }, function(err, usuario) {
     if (err) return res.status(500).send(err);
+    if (!usuario) {
+      return res.status(404).send({
+        message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
+      });
+    }
     // console.log(usuario);
     res.status(200).send(usuario);
   });
@@ -38,5 +44,49 @@ exports.post = (req, res) => {
 };
 
 //PUT
+//Rota/usuarios/edit/:id
+exports.putUsuarioPorId = (req, res) => {
+  // const editUsuario = {
+  //   nome: req.body.nome,
+  //   email: req.body.email,
+  //   saldo: req.body.saldo
+  // };
+  const usuarioId = req.params.id;
+
+  Usuarios.findByIdAndUpdate(
+    { _id: objectId(usuarioId) },
+    { $set: req.body },
+    function(err, usuario) {
+      if (err) res.status(500).send(err);
+      if (!usuario) {
+        return res.status(404).send({
+          message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
+        });
+      }
+
+      res.status(200).send({
+        status: "ativo",
+        mensagem: `Usuário(a) ${usuario.nome} atualizado(a) com sucesso!`
+      });
+    }
+  );
+};
 
 //DELETE
+//Rota/usuarios/delete/:id
+exports.deleteUsuarioPorId = (req, res) => {
+  const usuarioId = req.params.id;
+  Usuarios.findByIdAndDelete({ _id: objectId(usuarioId) }, function(
+    err,
+    usuario
+  ) {
+    if (err) res.status(500).send(err);
+    if (!usuario) {
+      return res.status(404).send({
+        message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
+      });
+    }
+
+    res.status(204).send(`Usuário ${usuario.nome} foi excluído com sucesso!`);
+  });
+};
