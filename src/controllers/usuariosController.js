@@ -32,12 +32,12 @@ exports.getUsuariosPorId = (req, res) => {
 //Rota/usuarios
 exports.post = (req, res) => {
   let usuario = new Usuarios(req.body);
+  
 
   usuario.save(function(err) {
     if (err) res.status(500).send(err);
 
     res.status(201).send({
-      status: "ativo",
       mensagem: `Usuário(a) ${usuario.nome} incluído(a) com sucesso!`
     });
   });

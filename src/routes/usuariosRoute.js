@@ -15,4 +15,5 @@ router.put("/edit/:id", controller.putUsuarioPorId);
 // Rotas DELETE
 router.delete("/delete/:id", controller.deleteUsuarioPorId);
 
+
 module.exports = router;

@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const assert = require("assert");
 
-const validateEmail = function(email) {
+const validacaoEmail = function(email) {
   const re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   return re.test(email);
 };
@@ -12,13 +12,14 @@ const usuariosSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      validate: [validateEmail, "Please fill a valid email address"],
+      validate: [validacaoEmail, "Please fill a valid email address"],
       match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         "Please fill a valid email address"
       ]
     },
-    saldo: { type: Number }
+    saldo: { type: Number },
+    publicacoes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Publicacoes" }]
   },
   { versionKey: false, timestamps: true }
 );
