@@ -111,7 +111,7 @@ exports.postPorUsuario = async (req, res) => {
   await userById.save(function(err) {
     if (err) res.status(500).send(err);
 
-    return res.status(201).send("Post incluído com sucesso!", userById);
+    return res.status(201).send({ message: "Post incluído com sucesso!" });
   });
 };
 
@@ -153,7 +153,8 @@ exports.putPublicacaoPorId = (req, res) => {
 
 //DELETE
 //Rota/publicacoes/delete/:id
-//PS: I still need to make the reference of the post inside the author object be deleted as well
+//When I delete the post, its reference also is removed from the User
+
 exports.deletePublicacaoPorId = (req, res) => {
   const publicacaoId = req.params.id;
   Publicacoes.findByIdAndDelete({ _id: objectId(publicacaoId) }, function(
@@ -166,7 +167,30 @@ exports.deletePublicacaoPorId = (req, res) => {
         message: `Não foi possível localizar a publicação de ID: ${publicacaoId}`
       });
     }
-
-    res.status(204).send("Publicação removida com sucesso!");
+    Usuarios.update(
+      { publicacoes: objectId(publicacaoId) },
+      { $pull: { publicacoes: objectId(publicacaoId) } },
+      function(err, usuario) {
+        if (err) res.status(500).send(err);
+      }
+    );
+    res.status(200).send({mensagem: "Publicação removida com sucesso!"});
   });
 };
+
+// exports.deletePublicacaoPorId = (req, res) => {
+//   const publicacaoId = req.params.id;
+//   Publicacoes.findByIdAndDelete({ _id: objectId(publicacaoId) }, function(
+//     err,
+//     publicacao
+//   ) {
+//     if (err) res.status(500).send(err);
+//     if (!publicacao) {
+//       return res.status(404).send({
+//         message: `Não foi possível localizar a publicação de ID: ${publicacaoId}`
+//       });
+//     }
+
+//     res.status(204).send("Publicação removida com sucesso!");
+//   });
+// };

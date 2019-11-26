@@ -11,7 +11,7 @@ router.get("/autor/:idAutor", controller.getPublicacaoPorIdAutor);
 router.get("/:id", controller.getPublicacaoPorId);
 
 //Rotas POST
-router.post("/:id", controller.postPorUsuario);
+router.post("/post/:id", controller.postPorUsuario);
 
 //Rotas PUT
 router.put("/edit/:id", controller.putPublicacaoPorId);

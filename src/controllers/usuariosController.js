@@ -1,4 +1,5 @@
 const Usuarios = require("../model/usuarios");
+const Publicacoes = require("../model/publicacoes");
 const objectId = require("mongodb").ObjectID;
 
 //GET
@@ -32,7 +33,6 @@ exports.getUsuariosPorId = (req, res) => {
 //Rota/usuarios
 exports.post = (req, res) => {
   let usuario = new Usuarios(req.body);
-  
 
   usuario.save(function(err) {
     if (err) res.status(500).send(err);
@@ -74,6 +74,7 @@ exports.putUsuarioPorId = (req, res) => {
 
 //DELETE
 //Rota/usuarios/delete/:id
+//When I delete user all the posts related to it gonna be removed as well
 exports.deleteUsuarioPorId = (req, res) => {
   const usuarioId = req.params.id;
   Usuarios.findByIdAndDelete({ _id: objectId(usuarioId) }, function(
@@ -86,7 +87,17 @@ exports.deleteUsuarioPorId = (req, res) => {
         message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
       });
     }
-
-    res.status(204).send(`Usuário ${usuario.nome} foi excluído com sucesso!`);
+    Publicacoes.findOneAndRemove(
+      { autor: { $in: objectId(usuarioId) } },
+      function(err, publicacao) {
+        if (err) res.status(500).send(err);
+      }
+    );
+    res
+      .status(200)
+      .send(
+        `Usuário ${usuario.nome} e todas as publicações associadas a ele foram excluídos com sucesso!`
+      );
   });
 };
+
