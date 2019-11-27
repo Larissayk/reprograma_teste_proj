@@ -5,8 +5,9 @@ const objectId = require("mongodb").ObjectID;
 //GET
 
 //Rota/usuarios
+//from the newest to the oldest
 exports.get = (req, res) => {
-  Usuarios.find(function(err, usuarios) {
+  Usuarios.find().sort({createdAt: -1}).exec(function(err, usuarios) {
     if (err) res.status(500).send(err);
     res.status(200).send(usuarios);
   });

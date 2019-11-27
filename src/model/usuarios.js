@@ -19,7 +19,8 @@ const usuariosSchema = new mongoose.Schema(
       ]
     },
     saldo: { type: Number },
-    publicacoes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Publicacoes" }]
+    publicacoes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Publicacoes" }],
+    comentarios: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comentarios" }]
   },
   { versionKey: false, timestamps: true }
 );

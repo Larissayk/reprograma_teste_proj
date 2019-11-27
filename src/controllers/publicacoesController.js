@@ -4,8 +4,9 @@ const objectId = require("mongodb").ObjectID;
 
 //GET
 //Rota/publicacoes
+//from the newest to the oldest
 exports.get = (req, res) => {
-  Publicacoes.find(function(err, publicacoes) {
+  Publicacoes.find().sort({createdAt: -1}).exec(function(err, publicacoes) {
     if (err) res.status(500).send(err);
     res.status(200).send(publicacoes);
   });
@@ -27,10 +28,11 @@ exports.getPublicacaoPorId = (req, res) => {
 };
 
 //Rota/publicações/:categoria
+//from the newest to the oldest
 exports.getPorCategoria = (req, res) => {
   const categoriaPublicacao = req.params.categoria;
   console.log(categoriaPublicacao);
-  Publicacoes.find({ categoria: categoriaPublicacao }, function(
+  Publicacoes.find({ categoria: categoriaPublicacao }).sort({createdAt: -1}).exec(function(
     err,
     publicacao
   ) {
@@ -75,10 +77,11 @@ exports.getPublicacaoPorDia = (req, res) => {
   );
 };
 
-//Rota/publicações/autor/:autor
+//Rota/publicações/autor/:idAutor
+//from the newest to the oldest
 exports.getPublicacaoPorIdAutor = (req, res) => {
   const usuarioId = req.params.idAutor;
-  Publicacoes.find({ autor: objectId(usuarioId) }, function(err, publicacao) {
+  Publicacoes.find({ autor: objectId(usuarioId)}).sort({createdAt: -1}).exec(function(err, publicacao) {
     if (err) res.status(500).send(err);
     if (!publicacao) {
       return res.status(404).send({
@@ -90,25 +93,26 @@ exports.getPublicacaoPorIdAutor = (req, res) => {
   });
 };
 
+
 //POST
 //Rota/publicacoes/:id
+//add Post per UserId
 exports.postPorUsuario = async (req, res) => {
-  const usuario = req.params;
-  const id = usuario.id;
+  const usuarioId = req.params.id;
   const { titulo, descricao, categoria, valor } = req.body;
   const publicacao = await Publicacoes.create({
     titulo,
     descricao,
     categoria,
     valor,
-    autor: id
+    autor: usuarioId
   });
   await publicacao.save();
 
-  const userById = await Usuarios.findById(id);
+  const usuarioPorId = await Usuarios.findById(usuarioId);
 
-  userById.publicacoes.push(publicacao);
-  await userById.save(function(err) {
+  usuarioPorId.publicacoes.push(publicacao);
+  await usuarioPorId.save(function(err) {
     if (err) res.status(500).send(err);
 
     return res.status(201).send({ message: "Post incluído com sucesso!" });
@@ -167,14 +171,14 @@ exports.deletePublicacaoPorId = (req, res) => {
         message: `Não foi possível localizar a publicação de ID: ${publicacaoId}`
       });
     }
-    Usuarios.update(
+    Usuarios.updateOne(
       { publicacoes: objectId(publicacaoId) },
       { $pull: { publicacoes: objectId(publicacaoId) } },
       function(err, usuario) {
         if (err) res.status(500).send(err);
       }
     );
-    res.status(200).send({mensagem: "Publicação removida com sucesso!"});
+    res.status(200).send({ mensagem: "Publicação removida com sucesso!" });
   });
 };
 

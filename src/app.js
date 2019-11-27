@@ -31,9 +31,11 @@ app.use(function(req, res, next) {
 const index = require("./routes/index");
 const usuarios = require("./routes/usuariosRoute");
 const publicacoes = require("./routes/publicacoesRoute");
+const comentarios = require("./routes/comentariosRoute");
 
 app.use("/", index);
 app.use("/usuarios", usuarios);
 app.use("/publicacoes", publicacoes);
+app.use("/comentarios", comentarios);
 
 module.exports = app;

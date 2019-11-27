@@ -1,5 +1,4 @@
-const mongoose = require("mongoose")
-
+const mongoose = require("mongoose");
 
 const publicacoesSchema = new mongoose.Schema(
   {
@@ -7,7 +6,8 @@ const publicacoesSchema = new mongoose.Schema(
     descricao: { type: String },
     categoria: { type: String },
     valor: { type: Number },
-    autor: {type: mongoose.Schema.Types.ObjectId, ref: 'Usuarios'}
+    autor: { type: mongoose.Schema.Types.ObjectId, ref: "Usuarios" },
+    comentarios: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comentarios" }]
   },
   { versionKey: false, timestamps: true }
 );
