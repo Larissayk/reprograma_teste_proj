@@ -6,11 +6,17 @@ const objectId = require("mongodb").ObjectID;
 
 //Rota/usuarios
 exports.get = (req, res) => {
-  Usuarios.find(function(err, usuarios) {
-    if (err) res.status(500).send(err);
-    res.status(200).send(usuarios);
-  });
+  Usuarios.find()
+    .then(resp => res.status(200).send(resp))
+    .catch(err => res.status(500).send(err));
 };
+
+// exports.get =  (req, res) => {
+//    Usuarios.find(function(err, usuarios) {
+//     if (err) res.status(500).send(err);
+//     res.status(200).send(usuarios);
+//   });
+// };
 
 //Rota/usuarios por Id
 exports.getUsuariosPorId = (req, res) => {
@@ -100,4 +106,3 @@ exports.deleteUsuarioPorId = (req, res) => {
       );
   });
 };
-
