@@ -9,15 +9,23 @@ const mongoose = require("mongoose");
 //Show the comments(from the newest to the oldest) and the post related to them
 exports.getComentariosPorPublicacao = (req, res) => {
   const publicacaoId = req.params.postId;
-  Publicacoes.findById({ _id: objectId(publicacaoId) })
+  const publicacao = Publicacoes.findById({ _id: objectId(publicacaoId) })
     .populate({ path: "comentarios", options: { sort: { createdAt: -1 } } })
-    .exec(function(err, comentarios) {
-      if (err) {
-        return res.status(404).send(err);
-      }
-      res.status(200).send(comentarios);
-    });
+    .then(resp => console.log(publicacao))
+    .catch(err => res.status(404).send("error", err));
 };
+
+// exports.getComentariosPorPublicacao = (req, res) => {
+//   const publicacaoId = req.params.postId;
+//   Publicacoes.findById({ _id: objectId(publicacaoId) })
+//     .populate({ path: "comentarios", options: { sort: { createdAt: -1 } } })
+//     .exec(function(err, comentarios) {
+//       if (err) {
+//         return res.status(404).send(err);
+//       }
+//       res.status(200).send(comentarios);
+//     });
+// };
 
 //Show only the comments per Post
 // exports.getComentariosPorPublicacao = (req, res) => {

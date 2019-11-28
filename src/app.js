@@ -5,11 +5,11 @@ const app = express();
 //conversor
 app.use(express.json());
 
-//conexão com o MongoDB Bco Usuarios
+//conexão com o MongoDB Local
 mongoose.connect("mongodb://localhost:27017/proj_reprograma", {
   useNewUrlParser: true,
   useUnifiedTopology: true
-});
+}).catch(error => handleError(error));
 
 let db = mongoose.connection;
 db.on("error", console.log.bind(console, "connection error:"));
