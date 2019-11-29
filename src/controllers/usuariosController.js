@@ -95,6 +95,7 @@ exports.putUsuarioPorId = (req, res) => {
     //     });
     //   }
     // })
+    // .catch(err => res.status(500).send(err))
     .then(resp =>
       res.status(200).send({
         status: "ativo",
