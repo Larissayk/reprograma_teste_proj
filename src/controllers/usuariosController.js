@@ -1,5 +1,6 @@
 const Usuarios = require("../model/usuarios");
 const Publicacoes = require("../model/publicacoes");
+const Comentarios = require("../model/comentarios");
 const objectId = require("mongodb").ObjectID;
 
 //GET
@@ -23,18 +24,20 @@ exports.get = (req, res) => {
 // };
 
 //Rota/usuarios por Id
-exports.getUsuariosPorId = (req, res) => {
+exports.getUsuariosPorId = async (req, res) => {
   const usuarioId = req.params.id;
-  Usuarios.findOne({ _id: objectId(usuarioId) })
-    // .then(resp => {
-    //   if (!resp) {
-    //     return res.status(404).send({
-    //       message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
-    //     });
-    //   }
-    // })
-    .then(resp => res.status(200).send(resp))
-    .catch(err => res.status(500).send(err));
+  try {
+    const usuario = await Usuarios.findOne({ _id: objectId(usuarioId) });
+
+    if (!usuario) {
+      return res.status(404).send({
+        message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
+      });
+    }
+    res.status(200).send(usuario);
+  } catch (e) {
+    return res.status(400).json({ error: "erro" });
+  }
 };
 
 // exports.getUsuariosPorId = (req, res) => {
@@ -63,46 +66,30 @@ exports.post = (req, res) => {
         mensagem: `Usuário(a) ${resp.nome} incluído(a) com sucesso!`
       })
     )
-    .catch(err => res.status(500).send(err));
+    .catch(err => res.status(500).json({ error: "erro" }));
 };
 
 //PUT
 //Rota/usuarios/edit/:id
-// exports.putUsuarioPorId = async (req, res) => {
-//   const usuarioId = req.params.id;
-//   try {
-//     const usuario = await Usuarios.findByIdAndUpdate(
-//       { _id: objectId(usuarioId) },
-//       { $set: req.body }
-//     )
-//     return res.status(200).send({
-//       status: "ativo",
-//       mensagem: `Usuário(a) atualizado(a) com sucesso!`
-//     })
-//   } catch (e) {
-//     res.status(500).send(err);
-//   }
-// };
-
-exports.putUsuarioPorId = (req, res) => {
+exports.putUsuarioPorId = async (req, res) => {
   const usuarioId = req.params.id;
-
-  Usuarios.findByIdAndUpdate({ _id: objectId(usuarioId) }, { $set: req.body })
-    // .then(resp => {
-    //   if (!resp) {
-    //     return res.status(404).send({
-    //       message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
-    //     });
-    //   }
-    // })
-    // .catch(err => res.status(500).send(err))
-    .then(resp =>
-      res.status(200).send({
-        status: "ativo",
-        mensagem: `Usuário(a) ${resp.nome} atualizado(a) com sucesso!`
-      })
-    )
-    .catch(err => res.status(500).send(err));
+  try {
+    const usuario = await Usuarios.findByIdAndUpdate(
+      { _id: objectId(usuarioId) },
+      { $set: req.body }
+    );
+    if (!usuario) {
+      return res.status(404).send({
+        message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
+      });
+    }
+    res.status(200).send({
+      status: "ativo",
+      mensagem: `Usuário(a) ${usuario.nome} atualizado(a) com sucesso!`
+    });
+  } catch (e) {
+    return res.status(400).json({ error: "erro" });
+  }
 };
 
 // exports.putUsuarioPorId = (req, res) => {
@@ -118,7 +105,6 @@ exports.putUsuarioPorId = (req, res) => {
 //           message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
 //         });
 //       }
-
 //       res.status(200).send({
 //         status: "ativo",
 //         mensagem: `Usuário(a) ${usuario.nome} atualizado(a) com sucesso!`
@@ -129,28 +115,69 @@ exports.putUsuarioPorId = (req, res) => {
 
 //DELETE
 //Rota/usuarios/delete/:id
-//When I delete user all the posts related to it gonna be removed as well
-exports.deleteUsuarioPorId = (req, res) => {
+//When I delete user all the posts AND comments related to it gonna be removed as well
+exports.deleteUsuarioPorId = async (req, res) => {
   const usuarioId = req.params.id;
-  Usuarios.findByIdAndDelete({ _id: objectId(usuarioId) })
-    // .catch(err => {
-    //   if (!usuario) {
-    //     return res.status(404).send({
-    //       error: `Não foi possível localizar o usuário de ID: ${usuarioId}`
-    //     });
-    //   }
-    // })
-    .then(() =>
-      Publicacoes.findOneAndRemove({ autor: { $in: objectId(usuarioId) } })
-    )
-    .then(resp =>
-      res
-        .status(200)
-        .send(
-          `Usuário ${resp.nome} e todas as publicações associadas a ele foram excluídos com sucesso!`
-        )
-    )
-    .catch(err => res.status(500).send(err));
+  try {
+    const usuario = await Usuarios.findByIdAndDelete({
+      _id: objectId(usuarioId)
+    });
+    if (!usuario) {
+      return res.status(404).send({
+        message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
+      });
+    }
+
+    Publicacoes.findOneAndDelete(
+      { autor: { $in: objectId(usuarioId) } },
+      function(err) {
+        if (err)
+          res
+            .status(500)
+            .send("Erro ao deletar as publicações associadas ao usuário.");
+      },
+      console.log(
+        "Certifica-se de que qualquer publicação associada ao usuário também seja excluída."
+      )
+    );
+
+    Comentarios.findOneAndDelete(
+      { autor: { $in: objectId(usuarioId) } },
+      function(err) {
+        if (err)
+          res
+            .status(500)
+            .send("Erro ao deletar os comentários associadas ao usuário.");
+      },
+      console.log(
+        "Certifica-se de que qualquer comentário associado ao usuário seja excluído também."
+      )
+    );
+
+    await Publicacoes.findOneAndUpdate(
+      { comentarios: { $in: { autor: objectId(usuarioId) } } },
+      { $pull: { comentarios: { $in: { autor: objectId(usuarioId) } } } },
+      function(err) {
+        if (err)
+          res
+            .status(500)
+            .send(
+              "Erro ao deletar as referências dos comentários nas publicações."
+            );
+      },
+      console.log(
+        "Certifica-se de que qualquer referência de comentário do usuário também seja excluído das publicações."
+      )
+    );
+
+    return res
+      .status(200)
+      .send(
+        `Usuário ${usuario.nome} e todas as publicações associadas a ele foram excluídos com sucesso!`
+      );
+  } catch (e) {
+    return res.status(400).json({ error: "erro" });
+  }
 };
 
 // exports.deleteUsuarioPorId = (req, res) => {

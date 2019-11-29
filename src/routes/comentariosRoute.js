@@ -7,7 +7,7 @@ router.get("/publicacao/:postId", controller.getComentariosPorPublicacao);
 router.get("/usuario/:authorId", controller.getComentariosPorUsuario);
 
 //Rotas POST
-router.post("/post/:postId/:authorId", controller.postComentarioPorPublicacao);
+router.post("/post/:postId/autor/:authorId", controller.postComentarioPorPublicacao);
 
 //Rotas PUT
 router.put("/edit/:id", controller.updateComentariosPorId);
