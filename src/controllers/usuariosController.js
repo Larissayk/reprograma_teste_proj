@@ -113,7 +113,7 @@ exports.putUsuarioPorId = async (req, res) => {
 //   );
 // };
 
-//DELETE
+//DELETE  - FALTANDO ARRUMAR!!!!!!!
 //Rota/usuarios/delete/:id
 //When I delete user all the posts AND comments related to it gonna be removed as well
 exports.deleteUsuarioPorId = async (req, res) => {

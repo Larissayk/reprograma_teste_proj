@@ -46,33 +46,36 @@ exports.getComentariosPorPublicacao = (req, res) => {
 
 //Rota/comentarios/usuario/:authorId
 //Show comments (from the newest to the oldest) embedded in User object
-// exports.getComentariosPorUsuario = (req, res) => {
-//   const usuarioId = req.params.authorId;
-//   Usuarios.findById({ _id: objectId(usuarioId) })
-//     .populate({ path: "comentarios", options: { sort: { createdAt: -1 } } })
-//     .exec(function(err, comentarios) {
-//       if (err) {
-//         return res.status(404).send(err);
-//       }
-//       res.status(200).send(comentarios);
-//     });
-// };
-
-//Show only the comments per User (newest to the oldest)
 exports.getComentariosPorUsuario = (req, res) => {
   const usuarioId = req.params.authorId;
-  Comentarios.find({ autor: objectId(usuarioId) })
-    .sort({ createdAt: -1 })
-    .exec(function(err, comentarios) {
-      if (err) res.status(500).send(err);
-      if (!comentarios) {
-        return res
-          .status(404)
-          .send({ message: `Não existem comentários para esse usuário!` });
+  Usuarios.findById({ _id: objectId(usuarioId) })
+    .populate({ path: "comentarios", options: { sort: { createdAt: -1 } } })
+    .then(resp => {
+      if (resp == 0) {
+        return res.status(404).send(err);
       }
-      res.status(200).send(comentarios);
-    });
+      res.status(200).send(resp);
+    })
+    .catch(err => res.status(500).json({ error: "erro" }));
 };
+
+
+//Show only the comments per User (newest to the oldest)
+// exports.getComentariosPorUsuario = (req, res) => {
+//   const usuarioId = req.params.authorId;
+//   Comentarios.find({ autor: objectId(usuarioId) })
+//     .sort({ createdAt: -1 })
+//     .then(resp => {
+//       if (resp == 0) {
+//         return res
+//           .status(404)
+//           .send({ message: `Não existem comentários para esse usuário!` });
+//       }
+//       res.status(200).send(resp);
+//     })
+//     .catch(err => res.status(500).json({ error: "erro" }));
+// };
+
 
 //POST
 //Rota/comentarios/post/:postId/:authorId

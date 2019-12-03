@@ -6,25 +6,25 @@ const objectId = require("mongodb").ObjectID;
 //Rota/publicacoes
 //from the newest to the oldest
 exports.get = (req, res) => {
-  Publicacoes.find().sort({createdAt: -1}).exec(function(err, publicacoes) {
-    if (err) res.status(500).send(err);
-    res.status(200).send(publicacoes);
-  });
+  Publicacoes.find()
+  .sort({createdAt: -1})
+  .then(resp => res.status(200).send(resp))
+  .catch(err => res.status(500).json({error: erro}))
 };
 
 //Rota/publicacoes/:id
 exports.getPublicacaoPorId = (req, res) => {
   const publicacaoId = req.params.id;
-  Publicacoes.find({ _id: objectId(publicacaoId) }, function(err, publicacao) {
-    if (err) res.status(500).send(err);
-    if (!publicacao) {
-      return res.status(404).send({
-        message: `Não foi possível localizar a publicação de ID: ${publicacaoId}`
-      });
-    }
-
-    res.status(200).send(publicacao);
-  });
+  Publicacoes.find({ _id: objectId(publicacaoId) })
+    .then(resp => {
+      if (resp == 0) {
+        return res.status(404).send({
+          message: `Não foi possível localizar a publicação de ID: ${publicacaoId}`
+        });
+      }
+      res.status(200).send(resp);
+    })
+    .catch(err => res.status(500).json({ error: erro }));
 };
 
 //Rota/publicações/:categoria
@@ -32,14 +32,12 @@ exports.getPublicacaoPorId = (req, res) => {
 exports.getPorCategoria = (req, res) => {
   const categoriaPublicacao = req.params.categoria;
   console.log(categoriaPublicacao);
-  Publicacoes.find({ categoria: categoriaPublicacao }).sort({createdAt: -1}).exec(function(
-    err,
-    publicacao
-  ) {
-    if (err) res.status(500).send(err);
-    res.status(200).send(publicacao);
-  });
+  Publicacoes.find({ categoria: categoriaPublicacao })
+    .sort({ createdAt: -1 })
+    .then(resp => res.status(200).send(resp))
+    .catch(err => res.status(500).json({ error: erro }));
 };
+
 
 //Rota/publicacoes/mesCriacao/:mes
 exports.getPublicacaoPorMes = (req, res) => {
