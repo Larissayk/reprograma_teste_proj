@@ -116,69 +116,69 @@ exports.putUsuarioPorId = async (req, res) => {
 //DELETE  - FALTANDO ARRUMAR!!!!!!!
 //Rota/usuarios/delete/:id
 //When I delete user all the posts AND comments related to it gonna be removed as well
-exports.deleteUsuarioPorId = async (req, res) => {
-  const usuarioId = req.params.id;
-  try {
-    const usuario = await Usuarios.findByIdAndDelete({
-      _id: objectId(usuarioId)
-    });
-    if (!usuario) {
-      return res.status(404).send({
-        message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
-      });
-    }
+// exports.deleteUsuarioPorId = async (req, res) => {
+//   const usuarioId = req.params.id;
+//   try {
+//     const usuario = await Usuarios.findByIdAndDelete({
+//       _id: objectId(usuarioId)
+//     });
+//     if (!usuario) {
+//       return res.status(404).send({
+//         message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
+//       });
+//     }
 
-    Publicacoes.findOneAndDelete(
-      { autor: { $in: objectId(usuarioId) } },
-      function(err) {
-        if (err)
-          res
-            .status(500)
-            .send("Erro ao deletar as publicações associadas ao usuário.");
-      },
-      console.log(
-        "Certifica-se de que qualquer publicação associada ao usuário também seja excluída."
-      )
-    );
+//     Publicacoes.findOneAndDelete(
+//       { autor: { $in: objectId(usuarioId) } },
+//       function(err) {
+//         if (err)
+//           res
+//             .status(500)
+//             .send("Erro ao deletar as publicações associadas ao usuário.");
+//       },
+//       console.log(
+//         "Certifica-se de que qualquer publicação associada ao usuário também seja excluída."
+//       )
+//     );
 
-    Comentarios.findOneAndDelete(
-      { autor: { $in: objectId(usuarioId) } },
-      function(err) {
-        if (err)
-          res
-            .status(500)
-            .send("Erro ao deletar os comentários associadas ao usuário.");
-      },
-      console.log(
-        "Certifica-se de que qualquer comentário associado ao usuário seja excluído também."
-      )
-    );
+//     Comentarios.findOneAndDelete(
+//       { autor: { $in: objectId(usuarioId) } },
+//       function(err) {
+//         if (err)
+//           res
+//             .status(500)
+//             .send("Erro ao deletar os comentários associadas ao usuário.");
+//       },
+//       console.log(
+//         "Certifica-se de que qualquer comentário associado ao usuário seja excluído também."
+//       )
+//     );
 
-    await Publicacoes.findOneAndUpdate(
-      { comentarios: { $in: { autor: objectId(usuarioId) } } },
-      { $pull: { comentarios: { $in: { autor: objectId(usuarioId) } } } },
-      function(err) {
-        if (err)
-          res
-            .status(500)
-            .send(
-              "Erro ao deletar as referências dos comentários nas publicações."
-            );
-      },
-      console.log(
-        "Certifica-se de que qualquer referência de comentário do usuário também seja excluído das publicações."
-      )
-    );
+//     await Publicacoes.findOneAndUpdate(
+//       { comentarios: { $in: { autor: objectId(usuarioId) } } },
+//       { $pull: { comentarios: { $in: { autor: objectId(usuarioId) } } } },
+//       function(err) {
+//         if (err)
+//           res
+//             .status(500)
+//             .send(
+//               "Erro ao deletar as referências dos comentários nas publicações."
+//             );
+//       },
+//       console.log(
+//         "Certifica-se de que qualquer referência de comentário do usuário também seja excluído das publicações."
+//       )
+//     );
 
-    return res
-      .status(200)
-      .send(
-        `Usuário ${usuario.nome} e todas as publicações associadas a ele foram excluídos com sucesso!`
-      );
-  } catch (e) {
-    return res.status(400).json({ error: "erro" });
-  }
-};
+//     return res
+//       .status(200)
+//       .send(
+//         `Usuário ${usuario.nome} e todas as publicações associadas a ele foram excluídos com sucesso!`
+//       );
+//   } catch (e) {
+//     return res.status(400).json({ error: "erro" });
+//   }
+// };
 
 // exports.deleteUsuarioPorId = (req, res) => {
 //   const usuarioId = req.params.id;
@@ -205,3 +205,13 @@ exports.deleteUsuarioPorId = async (req, res) => {
 //       );
 //   });
 // };
+
+exports.deleteUsuarioPorId = (req, res) => {
+  const usuarioId = req.params.id;
+      const user = Comentarios.find({ autor: { $in: objectId(usuarioId) } });
+      console.log({user});
+      
+      
+
+  // });
+};
