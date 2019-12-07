@@ -46,33 +46,34 @@ exports.getComentariosPorPublicacao = (req, res) => {
 
 //Rota/comentarios/usuario/:authorId
 //Show comments (from the newest to the oldest) embedded in User object
-// exports.getComentariosPorUsuario = (req, res) => {
-//   const usuarioId = req.params.authorId;
-//   Usuarios.findById({ _id: objectId(usuarioId) })
-//     .populate({ path: "comentarios", options: { sort: { createdAt: -1 } } })
-//     .exec(function(err, comentarios) {
-//       if (err) {
-//         return res.status(404).send(err);
-//       }
-//       res.status(200).send(comentarios);
-//     });
-// };
-
-//Show only the comments per User (newest to the oldest)
 exports.getComentariosPorUsuario = (req, res) => {
   const usuarioId = req.params.authorId;
-  Comentarios.find({ autor: objectId(usuarioId) })
-    .sort({ createdAt: -1 })
-    .exec(function(err, comentarios) {
-      if (err) res.status(500).send(err);
-      if (!comentarios) {
-        return res
-          .status(404)
-          .send({ message: `Não existem comentários para esse usuário!` });
+  Usuarios.findById({ _id: objectId(usuarioId) })
+    .populate({ path: "comentarios", options: { sort: { createdAt: -1 } } })
+    .then(resp => {
+      if (resp == 0) {
+        return res.status(404).send(err);
       }
-      res.status(200).send(comentarios);
-    });
+      res.status(200).send(resp);
+    })
+    .catch(err => res.status(500).json({ error: "erro" }));
 };
+
+//Show only the comments per User (newest to the oldest)
+// exports.getComentariosPorUsuario = (req, res) => {
+//   const usuarioId = req.params.authorId;
+//   Comentarios.find({ autor: objectId(usuarioId) })
+//     .sort({ createdAt: -1 })
+//     .then(resp => {
+//       if (resp == 0) {
+//         return res
+//           .status(404)
+//           .send({ message: `Não existem comentários para esse usuário!` });
+//       }
+//       res.status(200).send(resp);
+//     })
+//     .catch(err => res.status(500).json({ error: "erro" }));
+// };
 
 //POST
 //Rota/comentarios/post/:postId/:authorId
@@ -88,23 +89,27 @@ exports.postComentarioPorPublicacao = async (req, res) => {
   });
   await comentario.save();
 
-  const publicacaoPorId = await Publicacoes.findById(publicacaoId);
-  publicacaoPorId.comentarios.push(comentario);
+  try {
+    const publicacaoPorId = await Publicacoes.findById(publicacaoId);
+    publicacaoPorId.comentarios.push(comentario);
 
-  const autorPorId = await Usuarios.findById(autorId);
-  autorPorId.comentarios.push(comentario);
+    const autorPorId = await Usuarios.findById(autorId);
+    autorPorId.comentarios.push(comentario);
 
-  publicacaoPorId.save(function(err) {
-    if (err) res.status(500).send(err);
-
-    autorPorId.save(function(err) {
+    publicacaoPorId.save(function(err) {
       if (err) res.status(500).send(err);
 
-      return res
-        .status(201)
-        .send({ message: "Comentário incluído com sucesso!" });
+      autorPorId.save(function(err) {
+        if (err) res.status(500).send(err);
+
+        return res
+          .status(201)
+          .send({ message: "Comentário incluído com sucesso!" });
+      });
     });
-  });
+  } catch (e) {
+    return res.status(400).json({ error: "erro" });
+  }
 };
 
 //PUT
@@ -113,17 +118,17 @@ exports.updateComentariosPorId = (req, res) => {
   const comentarioId = req.params.id;
   Comentarios.findByIdAndUpdate(
     { _id: objectId(comentarioId) },
-    { $set: req.body },
-    function(err, comentario) {
-      if (err) res.status(500).send(err);
-      if (!comentario) {
+    { $set: req.body }
+  )
+    .then(resp => {
+      if (resp == 0) {
         return res.status(404).send({
-          message: `Não foi possível localizar o comentário de ID ${comentario}.`
+          message: `Não foi possível localizar o comentário de ID ${comentarioId}.`
         });
       }
       res.status(200).send({ mensagem: "Comentário atualizado com sucesso!" });
-    }
-  );
+    })
+    .catch(err => res.status(500).json({ error: erro }));
 };
 
 //DELETE
@@ -131,30 +136,34 @@ exports.updateComentariosPorId = (req, res) => {
 // Delete the comment and all its references on the User document and Post document
 exports.deleteComentariosPorId = (req, res) => {
   const comentarioId = req.params.id;
-  Comentarios.findByIdAndDelete({ _id: objectId(comentarioId) }, function(
-    err,
-    comentario
-  ) {
-    if (err) res.status(500).send(err);
-    if (!comentario) {
-      return res.status(404).send({
-        message: `Não foi possível localizar o comentário de ID: ${comentarioId}`
-      });
+  Comentarios.findByIdAndDelete({ _id: objectId(comentarioId) }).then(resp => {
+    if (resp == 0) {
+      return res
+        .status(404)
+        .send({
+          message: `Não foi possível localizar o comentário de ID: ${comentarioId}`
+        })
+        .catch(err =>
+          res.status(500).json({ error: "erro ao deletar o comentário." })
+        );
     }
+  }),
     Publicacoes.updateOne(
       { comentarios: objectId(comentarioId) },
-      { $pull: { comentarios: objectId(comentarioId) } },
-      function(err, publicacao) {
-        if (err) res.status(500).send(err);
-      }
-    );
+      { $pull: { comentarios: objectId(comentarioId) } })
+      .then(resp =>
+        console
+          .log(resp)
+          .catch(err =>
+            res
+              .status(500)
+              .json({ error: "erro ao atualizar a referência na publicação." })
+          )
+      ),
     Usuarios.updateOne(
       { comentarios: objectId(comentarioId) },
-      { $pull: { comentarios: objectId(comentarioId) } },
-      function(err, usuario) {
-        if (err) res.status(500).send(err);
-      }
+      { $pull: { comentarios: objectId(comentarioId) } })
+        .then(resp => res.status(200).send({ mensagem: "Comentário removido com sucesso!" })
+        .catch(err => res.status(500).json({ error: erro }))
     );
-    res.status(200).send({ mensagem: "Comentário removido com sucesso!" });
-  });
 };
