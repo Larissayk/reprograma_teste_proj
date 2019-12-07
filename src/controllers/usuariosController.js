@@ -128,6 +128,30 @@ exports.deleteUsuarioPorId = async (req, res) => {
       });
     }
 
+    const teste = await Publicacoes.find().populate(
+      { path: "comentarios" },
+      function(err) {
+        if (err)
+          res.status(500).send("Erro ao popular comentários das publicações");
+      },
+      console.log(teste),
+      await teste.findOneAndUpdate({
+        comentarios: { $in: { autor: objectId(usuarioId) } }
+      }),
+      { $pull: { comentarios: { $in: { autor: objectId(usuarioId) } } } },
+      function(err) {
+        if (err)
+          res
+            .status(500)
+            .send(
+              "Erro ao deletar as referências dos comentários nas publicações."
+            );
+      },
+      console.log(
+        "Certifica-se de que qualquer referência de comentário do usuário também seja excluído das publicações."
+      )
+    );
+
     Publicacoes.findOneAndDelete(
       { autor: { $in: objectId(usuarioId) } },
       function(err) {
@@ -154,22 +178,6 @@ exports.deleteUsuarioPorId = async (req, res) => {
       )
     );
 
-    await Publicacoes.findOneAndUpdate(
-      { comentarios: { $in: { autor: objectId(usuarioId) } } },
-      { $pull: { comentarios: { $in: { autor: objectId(usuarioId) } } } },
-      function(err) {
-        if (err)
-          res
-            .status(500)
-            .send(
-              "Erro ao deletar as referências dos comentários nas publicações."
-            );
-      },
-      console.log(
-        "Certifica-se de que qualquer referência de comentário do usuário também seja excluído das publicações."
-      )
-    );
-
     return res
       .status(200)
       .send(
@@ -192,16 +200,41 @@ exports.deleteUsuarioPorId = async (req, res) => {
 //         message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
 //       });
 //     }
-//     Publicacoes.findOneAndRemove(
-//       { autor: { $in: objectId(usuarioId) } },
-//       function(err, publicacao) {
-//         if (err) res.status(500).send(err);
-//       }
-//     );
-//     res
-//       .status(200)
-//       .send(
-//         `Usuário ${usuario.nome} e todas as publicações associadas a ele foram excluídos com sucesso!`
-//       );
-//   });
-// };
+
+// const teste = await Publicacoes.find().populate(
+//   { path: "comentarios" },
+//   function(err) {
+//     if (err)
+//       res.status(500).send("Erro ao popular comentários das publicações");
+//   },
+//   console.log(teste),
+//   await teste.findOneAndUpdate({
+//     comentarios: { $in: { autor: objectId(usuarioId) } }
+//   }),
+//   { $pull: { comentarios: { $in: { autor: objectId(usuarioId) } } } },
+//   function(err) {
+//     if (err)
+//       res
+//         .status(500)
+//         .send(
+//           "Erro ao deletar as referências dos comentários nas publicações."
+//         );
+//   },
+//   console.log(
+//     "Certifica-se de que qualquer referência de comentário do usuário também seja excluído das publicações."
+//   )
+// );
+
+// //     Publicacoes.findOneAndRemove(
+// //       { autor: { $in: objectId(usuarioId) } },
+// //       function(err, publicacao) {
+// //         if (err) res.status(500).send(err);
+// //       }
+// //     );
+// //     res
+// //       .status(200)
+// //       .send(
+// //         `Usuário ${usuario.nome} e todas as publicações associadas a ele foram excluídos com sucesso!`
+// //       );
+// //   });
+// // };
