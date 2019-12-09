@@ -2,6 +2,8 @@ const Usuarios = require("../model/usuarios");
 const Publicacoes = require("../model/publicacoes");
 const Comentarios = require("../model/comentarios");
 const objectId = require("mongodb").ObjectID;
+const bcrypt = require("bcryptjs");
+const bcryptSalt = 8;
 
 //GET
 
@@ -56,17 +58,31 @@ exports.getUsuariosPorId = async (req, res) => {
 //POST
 
 //Rota/usuarios
-exports.post = (req, res) => {
-  let usuario = new Usuarios(req.body);
+exports.post = async (req, res) => {
+  const { nome, email, password, saldo } = req.body;
+  const salt = bcrypt.genSaltSync(bcryptSalt);
+  const hashPass = await bcrypt.hashSync(password, salt);
 
-  usuario
-    .save()
-    .then(resp =>
-      res.status(201).send({
-        mensagem: `Usuário(a) ${resp.nome} incluído(a) com sucesso!`
-      })
-    )
-    .catch(err => res.status(500).json({ error: "erro" }));
+  const novoUsuario = new Usuarios({
+    nome,
+    email,
+    password: hashPass,
+    saldo,
+  });
+
+  try {
+    novoUsuario.save(function(err) {
+      if (err) {
+        return res.status(500).send({ message: err });
+      }
+      console.log("Registro salvo!");
+    });
+    return res.status(201).send({
+      mensagem: `Usuário ${novoUsuario.nome} incluído com sucesso!`
+    });
+  } catch (e) {
+    return res.status(401).json({ error: "erro" });
+  }
 };
 
 //PUT
@@ -206,12 +222,41 @@ exports.putUsuarioPorId = async (req, res) => {
 //   });
 // };
 
-exports.deleteUsuarioPorId = (req, res) => {
+exports.deleteUsuarioPorId = async (req, res) => {
   const usuarioId = req.params.id;
-      const user = Comentarios.find({ autor: { $in: objectId(usuarioId) } });
-      console.log({user});
-      
-      
 
-  // });
+  try {
+    const comentarioPorUser = await Comentarios.find({
+      autor: { $in: objectId(usuarioId) }
+    });
+    if (comentarioPorUser == 0) {
+      return res.status(404).send({
+        message: `Não foi possível localizar o comentário.`
+      });
+    }
+    const publicacaoComentario = comentarioPorUser.map(
+      usuario => usuario.publicacaoRef
+    );
+    console.log(publicacaoComentario[0]);
+    const publicacaoId = publicacaoComentario[0];
+    const publicacaoPopulada = await Publicacoes.findById({
+      _id: objectId(publicacaoId)
+    }).populate({ path: "comentarios", options: { sort: { createdAt: -1 } } });
+    if (publicacaoPopulada == 0) {
+      return res.status(404).send({
+        message: `Não foi possível localizar a publicação.`
+      });
+    }
+    console.log(publicacaoPopulada);
+    publicacaoPopulada.updateOne(
+      { comentarios: { $in: { autor: usuarioId } } },
+      { $pull: { comentarios: { $in: { autor: usuarioId } } } },
+      function(err, res) {
+        if (err) throw err;
+        res.json(res);
+      }
+    );
+  } catch (e) {
+    return res.status(400).json({ error: "erro" });
+  }
 };

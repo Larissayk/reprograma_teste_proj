@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>My App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <script>
+      if ("geolocation" in navigator) {
+        console.log("Geolocalização está disponível");
+        navigator.geolocation.getCurrentPosition(position => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            document.getElementById('latitude').textContent = lat;
+            document.getElementById('longitude').textContent = lon;
+
+            //console.log(position);
+            const dados = {lat, lon};
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+
+                },
+                body: JSON.stringify(dados)
+            };
+            fetch('/geolocalizacao', options);
+
+        });
+      } else {
+        console.log("Geolocalização não está disponível");
+      }
+    </script>
+
+    <h1>Pegar Geolocalização</h1>
+
+    <p>
+        latitude: <span id="latitude"></span>&deg;<br/>
+        longitude: <span id="longitude"></span>&deg;<br/>
+    </p>
+  </body>
+</html>

@@ -1,12 +1,16 @@
 const express = require("express");
-const router = express.Router();
+// const router = express.Router();
+const app = express();
 
-router.get("/", function(req, res) {
-  res.status(200).send({
-    title: "Projeto Livre Reprograma API",
-    author: "Larissa Yukie Kido",
-    version: "0.0.1"
-  });
-});
+app.use(express.static('public'));
 
-module.exports = router;
+
+// router.get("/", function(req, res) {
+//   res.status(200).send({
+//     title: "Projeto Livre Reprograma API",
+//     author: "Larissa Yukie Kido",
+//     version: "0.0.1"
+//   });
+// });
+
+// module.exports = router;

@@ -87,28 +87,47 @@ exports.postComentarioPorPublicacao = async (req, res) => {
     autor: autorId,
     publicacaoRef: publicacaoId
   });
-  await comentario.save();
 
   try {
     const publicacaoPorId = await Publicacoes.findById(publicacaoId);
-    publicacaoPorId.comentarios.push(comentario);
-
-    const autorPorId = await Usuarios.findById(autorId);
-    autorPorId.comentarios.push(comentario);
+    await publicacaoPorId.comentarios.push(comentario);
 
     publicacaoPorId.save(function(err) {
-      if (err) res.status(500).send(err);
-
-      autorPorId.save(function(err) {
-        if (err) res.status(500).send(err);
-
-        return res
-          .status(201)
-          .send({ message: "Comentário incluído com sucesso!" });
-      });
+      if (err) {
+        return res.status(500).send(err);
+      } 
+      console.log("Referência do comentário incluída na publicação");
     });
   } catch (e) {
     return res.status(400).json({ error: "erro" });
+  }
+
+  try {
+    const autorPorId = await Usuarios.findById(autorId);
+    await autorPorId.comentarios.push(comentario);
+
+    autorPorId.save(function(err) {
+      if (err) {
+      return res.status(500).send(err);
+      } 
+      console.log("Referência do comentário incluída no usuário.");
+    });
+  } catch (e) {
+    return res.status(400).json({ error: "erro1" });
+  }
+
+  try {
+    comentario.save(function(err) {
+      if (err) {
+        return res.status(500).send({ message: err });
+      }
+      console.log("The file was saved!");
+    });
+    return res.status(201).send({
+      mensagem: `Comentário incluído com sucesso!`
+    });
+  } catch (e) {
+    return res.status(401).json({ error: "erro2" });
   }
 };
 
@@ -150,20 +169,23 @@ exports.deleteComentariosPorId = (req, res) => {
   }),
     Publicacoes.updateOne(
       { comentarios: objectId(comentarioId) },
-      { $pull: { comentarios: objectId(comentarioId) } })
-      .then(resp =>
-        console
-          .log(resp)
-          .catch(err =>
-            res
-              .status(500)
-              .json({ error: "erro ao atualizar a referência na publicação." })
-          )
-      ),
+      { $pull: { comentarios: objectId(comentarioId) } }
+    ).then(resp =>
+      console
+        .log(resp)
+        .catch(err =>
+          res
+            .status(500)
+            .json({ error: "erro ao atualizar a referência na publicação." })
+        )
+    ),
     Usuarios.updateOne(
       { comentarios: objectId(comentarioId) },
-      { $pull: { comentarios: objectId(comentarioId) } })
-        .then(resp => res.status(200).send({ mensagem: "Comentário removido com sucesso!" })
+      { $pull: { comentarios: objectId(comentarioId) } }
+    ).then(resp =>
+      res
+        .status(200)
+        .send({ mensagem: "Comentário removido com sucesso!" })
         .catch(err => res.status(500).json({ error: erro }))
     );
 };

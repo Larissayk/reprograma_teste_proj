@@ -115,7 +115,11 @@ exports.postPorUsuario = async (req, res) => {
     valor,
     autor: usuarioId
   });
-  await publicacao.save();
+  await publicacao.save(function(err) {
+    if (err) res.status(500).send(err);
+
+    return console.log("Publicacao salva");
+  });;
 
   try {
     const usuarioPorId = await Usuarios.findById(usuarioId);

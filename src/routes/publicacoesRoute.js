@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/publicacoesController");
+const authMiddleware = require("../middlewares/auth");
+
+
+// router.use(authMiddleware) //tudo que estiver abaixo, precisa de token.
 
 // Rotas GET
 router.get("/", controller.get);
