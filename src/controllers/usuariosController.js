@@ -67,7 +67,7 @@ exports.post = async (req, res) => {
     nome,
     email,
     password: hashPass,
-    saldo,
+    saldo
   });
 
   try {
@@ -241,7 +241,10 @@ exports.deleteUsuarioPorId = async (req, res) => {
     const publicacaoId = publicacaoComentario[0];
     const publicacaoPopulada = await Publicacoes.findById({
       _id: objectId(publicacaoId)
-    }).populate({ path: "comentarios", options: { sort: { createdAt: -1 } } });
+    }).populate({
+      path: "comentarios",
+      options: { sort: { createdAt: -1 } }
+    });
     if (publicacaoPopulada == 0) {
       return res.status(404).send({
         message: `Não foi possível localizar a publicação.`
@@ -249,13 +252,19 @@ exports.deleteUsuarioPorId = async (req, res) => {
     }
     console.log(publicacaoPopulada);
     publicacaoPopulada.updateOne(
-      { comentarios: { $in: { autor: usuarioId } } },
-      { $pull: { comentarios: { $in: { autor: usuarioId } } } },
-      function(err, res) {
-        if (err) throw err;
-        res.json(res);
+      { comentarios: { autor: objectId(usuarioId) } },
+      { $pull: { comentarios: { autor: objectId(usuarioId) } } },
+      function(err) {
+        if (err) {
+          res.status(500).send(err);
+        }
       }
     );
+    return res
+      .status(200)
+      .send(
+        `Usuário ${usuario.nome} e todas as publicações associadas a ele foram excluídos com sucesso!`
+      );
   } catch (e) {
     return res.status(400).json({ error: "erro" });
   }
