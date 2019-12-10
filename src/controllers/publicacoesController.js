@@ -170,7 +170,8 @@ exports.putPublicacaoPorId = (req, res) => {
 
 //DELETE
 //Rota/publicacoes/delete/:id
-//When I delete the post, its reference also is removed from the User
+//Publicação é removida; deleta a referência da publicação no Usuário.
+//Mas os comentários da publicação apagada permanecem.
 
 exports.deletePublicacaoPorId = (req, res) => {
   const publicacaoId = req.params.id;
@@ -196,6 +197,7 @@ exports.deletePublicacaoPorId = (req, res) => {
       .catch(err =>
         res.status(500).json({ error: "erro" })
       );
+        
 };
 
 // exports.deletePublicacaoPorId = (req, res) => {

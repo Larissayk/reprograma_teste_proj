@@ -131,163 +131,38 @@ exports.putUsuarioPorId = async (req, res) => {
 
 //DELETE  - FALTANDO ARRUMAR!!!!!!!
 //Rota/usuarios/delete/:id
-//When I delete user all the posts AND comments related to it gonna be removed as well
-// exports.deleteUsuarioPorId = async (req, res) => {
-//   const usuarioId = req.params.id;
-//   try {
-//     const usuario = await Usuarios.findByIdAndDelete({
-//       _id: objectId(usuarioId)
-//     });
-//     if (!usuario) {
-//       return res.status(404).send({
-//         message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
-//       });
-//     }
 
-//     Publicacoes.findOneAndDelete(
-//       { autor: { $in: objectId(usuarioId) } },
-//       function(err) {
-//         if (err)
-//           res
-//             .status(500)
-//             .send("Erro ao deletar as publicações associadas ao usuário.");
-//       },
-//       console.log(
-//         "Certifica-se de que qualquer publicação associada ao usuário também seja excluída."
-//       )
-//     );
-
-//     Comentarios.findOneAndDelete(
-//       { autor: { $in: objectId(usuarioId) } },
-//       function(err) {
-//         if (err)
-//           res
-//             .status(500)
-//             .send("Erro ao deletar os comentários associadas ao usuário.");
-//       },
-//       console.log(
-//         "Certifica-se de que qualquer comentário associado ao usuário seja excluído também."
-//       )
-//     );
-
-//     await Publicacoes.findOneAndUpdate(
-//       { comentarios: { $in: { autor: objectId(usuarioId) } } },
-//       { $pull: { comentarios: { $in: { autor: objectId(usuarioId) } } } },
-//       function(err) {
-//         if (err)
-//           res
-//             .status(500)
-//             .send(
-//               "Erro ao deletar as referências dos comentários nas publicações."
-//             );
-//       },
-//       console.log(
-//         "Certifica-se de que qualquer referência de comentário do usuário também seja excluído das publicações."
-//       )
-//     );
-
-//     return res
-//       .status(200)
-//       .send(
-//         `Usuário ${usuario.nome} e todas as publicações associadas a ele foram excluídos com sucesso!`
-//       );
-//   } catch (e) {
-//     return res.status(400).json({ error: "erro" });
-//   }
-// };
-
-
-exports.deleteUsuarioPorId = async (req, res) => {
+// Deleto o cadastro do usuário
+//Deleto as publicações e comentários do usuário
+//Referências dessas publicações e comentários permanecem, mas não retornam nada. Isso é um problema?
+exports.deleteUsuarioPorId = (req, res) => {
   const usuarioId = req.params.id;
 
-  try {
-    const comentarioPorUser = await Comentarios.find({
-      autor: { $in: objectId(usuarioId) }
-    });
-    if (comentarioPorUser == 0) {
-      return res.status(404).send({
-        message: `Não foi possível localizar o comentário.`
-      });
+  Usuarios.findByIdAndDelete({ _id: objectId(usuarioId) }).then(resp => {
+    if (resp == 0) {
+      return res
+        .status(404)
+        .send({
+          message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
+        })
+        .catch(err =>
+          res.status(500).json({ error: "erro ao deletar o usuário." })
+        );
     }
-    const publicacaoComentario = await comentarioPorUser.map(
-      usuario => usuario.publicacaoRef
-    );
+  }),
+    Publicacoes.findOneAndDelete({ autor: { $in: objectId(usuarioId) } })
+      .then(resp => console.log("Publicação removida com sucesso!"))
+      .catch(err =>
+        res.status(500).send("Erro ao deletar a publicação do usuário.")
+      );
 
-    
-    console.log(publicacaoComentario[0]);
-    const publicacaoId = publicacaoComentario[0];
-
-    const publicacaoPopulada = await Publicacoes.findById({
-      _id: objectId(publicacaoId)
-    }).populate({
-      path: "comentarios",
-      options: { sort: { createdAt: -1 } }
-    });
-    if (publicacaoPopulada == 0) {
-      return res.status(404).send({
-        message: `Não foi possível localizar a publicação.`
-      });
-    }
-    console.log(publicacaoPopulada);
-
-    publicacaoPopulada
-      .updateOne(
-        { "comentarios": { autor: objectId(usuarioId)  } },
-        { $pull: { "comentarios": { autor: objectId(usuarioId)  } } }
-      )
-      .then(resp =>
-        res
-          .status(200)
-          .send({ mensagem: " Ref. comentário removido com sucesso!" })
-      )
-      .catch(err => res.status(500).json({ error: "erro" }));
-  } catch (e) {
-    return res.status(400).json({ error: "erro" });
-  }
-
-  
-
-  // try {
-  //   const comentarioPorUser = await Comentarios.find({
-  //     autor: { $in: objectId(usuarioId) }
-  //   });
-  //   if (comentarioPorUser == 0) {
-  //     return res.status(404).send({
-  //       message: `Não foi possível localizar o comentário.`
-  //     });
-  //   }
-  //   const publicacaoComentario = comentarioPorUser.map(
-  //     usuario => usuario.publicacaoRef
-  //   );
-  //   console.log(publicacaoComentario[0]);
-  //   const publicacaoId = publicacaoComentario[0];
-  //   const publicacaoPopulada = await Publicacoes.findById({
-  //     _id: objectId(publicacaoId)
-  //   }).populate({
-  //     path: "comentarios",
-  //     options: { sort: { createdAt: -1 } }
-  //   });
-  //   if (publicacaoPopulada == 0) {
-  //     return res.status(404).send({
-  //       message: `Não foi possível localizar a publicação.`
-  //     });
-  //   }
-  //   console.log(publicacaoPopulada);
-  //   publicacaoPopulada.updateOne(
-  //     { comentarios: { autor: objectId(usuarioId) } },
-  //     { $pull: { comentarios: { autor: objectId(usuarioId) } } },
-  //     function(err) {
-  //       if (err) {
-  //         res.status(500).send(err);
-  //       }
-  //     }
-  //   );
-  //   return res
-  //     .status(200)
-  //     .send(
-  //       `Usuário ${usuario.nome} e todas as publicações associadas a ele foram excluídos com sucesso!`
-  //     );
-  // } catch (e) {
-  //   return res.status(400).json({ error: "erro" });
-  // }
+  Comentarios.findOneAndDelete({ autor: { $in: objectId(usuarioId) } })
+    .then(resp =>
+      res
+        .status(200)
+        .send(
+          `Usuário ${usuario.nome} e seus registros foram excluídos com sucesso!`
+        )
+    )
+    .catch(err => res.status(500).json({ error: "erro" }));
 };

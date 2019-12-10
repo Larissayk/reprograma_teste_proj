@@ -9,10 +9,15 @@ const mongoose = require("mongoose");
 //Show the comments(from the newest to the oldest) and the post related to them
 exports.getComentariosPorPublicacao = (req, res) => {
   const publicacaoId = req.params.postId;
-  const publicacao = Publicacoes.findById({ _id: objectId(publicacaoId) })
+  Publicacoes.findById({ _id: objectId(publicacaoId) })
     .populate({ path: "comentarios", options: { sort: { createdAt: -1 } } })
-    .then(resp => console.log(publicacao))
-    .catch(err => res.status(404).send("error", err));
+    .then(resp => {
+      if (resp == 0) {
+        return res.status(404).send("Não foi possível encontrar a publicação");
+      }
+      res.status(200).send(resp);
+    })
+    .catch(err => res.status(500).json({ error: "erro" }));
 };
 
 // exports.getComentariosPorPublicacao = (req, res) => {
@@ -52,7 +57,7 @@ exports.getComentariosPorUsuario = (req, res) => {
     .populate({ path: "comentarios", options: { sort: { createdAt: -1 } } })
     .then(resp => {
       if (resp == 0) {
-        return res.status(404).send(err);
+        return res.status(404).send("Não foi possível encontrar o usuário.");
       }
       res.status(200).send(resp);
     })
