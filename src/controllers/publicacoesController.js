@@ -194,7 +194,7 @@ exports.deletePublicacaoPorId = (req, res) => {
         res.status(200).send({ mensagem: "Publicação removida com sucesso!" })
       )
       .catch(err =>
-        res.status(500).json({ error: erro })
+        res.status(500).json({ error: "erro" })
       );
 };
 

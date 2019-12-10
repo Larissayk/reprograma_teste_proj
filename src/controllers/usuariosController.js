@@ -196,31 +196,6 @@ exports.putUsuarioPorId = async (req, res) => {
 //   }
 // };
 
-// exports.deleteUsuarioPorId = (req, res) => {
-//   const usuarioId = req.params.id;
-//   Usuarios.findByIdAndDelete({ _id: objectId(usuarioId) }, function(
-//     err,
-//     usuario
-//   ) {
-//     if (err) res.status(500).send(err);
-//     if (!usuario) {
-//       return res.status(404).send({
-//         message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
-//       });
-//     }
-//     Publicacoes.findOneAndRemove(
-//       { autor: { $in: objectId(usuarioId) } },
-//       function(err, publicacao) {
-//         if (err) res.status(500).send(err);
-//       }
-//     );
-//     res
-//       .status(200)
-//       .send(
-//         `Usuário ${usuario.nome} e todas as publicações associadas a ele foram excluídos com sucesso!`
-//       );
-//   });
-// };
 
 exports.deleteUsuarioPorId = async (req, res) => {
   const usuarioId = req.params.id;
@@ -234,11 +209,14 @@ exports.deleteUsuarioPorId = async (req, res) => {
         message: `Não foi possível localizar o comentário.`
       });
     }
-    const publicacaoComentario = comentarioPorUser.map(
+    const publicacaoComentario = await comentarioPorUser.map(
       usuario => usuario.publicacaoRef
     );
+
+    
     console.log(publicacaoComentario[0]);
     const publicacaoId = publicacaoComentario[0];
+
     const publicacaoPopulada = await Publicacoes.findById({
       _id: objectId(publicacaoId)
     }).populate({
@@ -251,21 +229,65 @@ exports.deleteUsuarioPorId = async (req, res) => {
       });
     }
     console.log(publicacaoPopulada);
-    publicacaoPopulada.updateOne(
-      { comentarios: { autor: objectId(usuarioId) } },
-      { $pull: { comentarios: { autor: objectId(usuarioId) } } },
-      function(err) {
-        if (err) {
-          res.status(500).send(err);
-        }
-      }
-    );
-    return res
-      .status(200)
-      .send(
-        `Usuário ${usuario.nome} e todas as publicações associadas a ele foram excluídos com sucesso!`
-      );
+
+    publicacaoPopulada
+      .updateOne(
+        { "comentarios": { autor: objectId(usuarioId)  } },
+        { $pull: { "comentarios": { autor: objectId(usuarioId)  } } }
+      )
+      .then(resp =>
+        res
+          .status(200)
+          .send({ mensagem: " Ref. comentário removido com sucesso!" })
+      )
+      .catch(err => res.status(500).json({ error: "erro" }));
   } catch (e) {
     return res.status(400).json({ error: "erro" });
   }
+
+  
+
+  // try {
+  //   const comentarioPorUser = await Comentarios.find({
+  //     autor: { $in: objectId(usuarioId) }
+  //   });
+  //   if (comentarioPorUser == 0) {
+  //     return res.status(404).send({
+  //       message: `Não foi possível localizar o comentário.`
+  //     });
+  //   }
+  //   const publicacaoComentario = comentarioPorUser.map(
+  //     usuario => usuario.publicacaoRef
+  //   );
+  //   console.log(publicacaoComentario[0]);
+  //   const publicacaoId = publicacaoComentario[0];
+  //   const publicacaoPopulada = await Publicacoes.findById({
+  //     _id: objectId(publicacaoId)
+  //   }).populate({
+  //     path: "comentarios",
+  //     options: { sort: { createdAt: -1 } }
+  //   });
+  //   if (publicacaoPopulada == 0) {
+  //     return res.status(404).send({
+  //       message: `Não foi possível localizar a publicação.`
+  //     });
+  //   }
+  //   console.log(publicacaoPopulada);
+  //   publicacaoPopulada.updateOne(
+  //     { comentarios: { autor: objectId(usuarioId) } },
+  //     { $pull: { comentarios: { autor: objectId(usuarioId) } } },
+  //     function(err) {
+  //       if (err) {
+  //         res.status(500).send(err);
+  //       }
+  //     }
+  //   );
+  //   return res
+  //     .status(200)
+  //     .send(
+  //       `Usuário ${usuario.nome} e todas as publicações associadas a ele foram excluídos com sucesso!`
+  //     );
+  // } catch (e) {
+  //   return res.status(400).json({ error: "erro" });
+  // }
 };
