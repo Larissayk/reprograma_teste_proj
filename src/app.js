@@ -58,4 +58,5 @@ app.use("/publicacoes", publicacoes);
 app.use("/comentarios", comentarios);
 app.use("/sessions", sessions);
 
+
 module.exports = app;
