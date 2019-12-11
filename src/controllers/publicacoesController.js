@@ -102,17 +102,22 @@ exports.getPublicacaoPorIdAutor = (req, res) => {
     .catch(err => res.status(500).json({ error: erro }));
 };
 
+
+  
+
 //POST
 //Rota/publicacoes/:id
 //add Post per UserId
 exports.postPorUsuario = async (req, res) => {
+
   const usuarioId = req.params.id;
-  const { titulo, descricao, categoria, valor } = req.body;
+  const { titulo, descricao, categoria, status, prioridade } = req.body;
   const publicacao = await Publicacoes.create({
     titulo,
     descricao,
     categoria,
-    valor,
+    status,
+    prioridade,
     autor: usuarioId
   });
   await publicacao.save(function(err) {

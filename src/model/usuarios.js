@@ -19,7 +19,6 @@ const usuariosSchema = new mongoose.Schema(
         "Please fill a valid email address"
       ]
     },
-    saldo: { type: Number },
     publicacoes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Publicacoes" }],
     comentarios: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comentarios" }]
   },

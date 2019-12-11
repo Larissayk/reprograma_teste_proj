@@ -59,7 +59,7 @@ exports.getUsuariosPorId = async (req, res) => {
 
 //Rota/usuarios
 exports.post = async (req, res) => {
-  const { nome, email, password, saldo } = req.body;
+  const { nome, email, password } = req.body;
   const salt = bcrypt.genSaltSync(bcryptSalt);
   const hashPass = await bcrypt.hashSync(password, salt);
 
@@ -67,7 +67,6 @@ exports.post = async (req, res) => {
     nome,
     email,
     password: hashPass,
-    saldo
   });
 
   try {
