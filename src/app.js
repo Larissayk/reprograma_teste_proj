@@ -45,8 +45,6 @@ app.use(function(req, res, next) {
   next();
 });
 
-
-
 // rotas
 const index = require("./routes/index");
 const usuarios = require("./routes/usuariosRoute");
