@@ -27,7 +27,7 @@
             document.getElementById('longitude').textContent = lon;
 
             //console.log(position);
-            const dados = {lat, lon};
+            const data = {lat, lon};
             const options = {
                 method: 'POST',
                 headers: {
@@ -35,10 +35,10 @@
                     'Access-Control-Allow-Origin': '*'
 
                 },
-                body: JSON.stringify(dados)
+                body: JSON.stringify(data)
             };
-            const resposta = await fetch('/', options);
-            const jsonData = await resposta.json();
+            const response = await fetch('/teste', options);
+            const jsonData = await response.json();
             console.log(jsonData);
         });
       } else {

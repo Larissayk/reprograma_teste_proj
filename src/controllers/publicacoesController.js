@@ -118,6 +118,7 @@ exports.postPorUsuario = async (req, res) => {
     categoria,
     status,
     prioridade,
+    geolocalizacao,
     autor: usuarioId
   });
   await publicacao.save(function(err) {

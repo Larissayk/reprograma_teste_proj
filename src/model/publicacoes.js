@@ -7,7 +7,9 @@ const publicacoesSchema = new mongoose.Schema(
     categoria: { type: String },
     status: { type: String },
     prioridade: { type: String },
-    geolocalizacao: {lat: {type: Number}, long: {type: Number}  },
+    coordenadas: {
+      type: [Number]
+     },
     autor: { type: mongoose.Schema.Types.ObjectId, ref: "Usuarios" },
     comentarios: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comentarios" }]
   },

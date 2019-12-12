@@ -1,6 +1,13 @@
+const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
+
+//Rota da API
+app.use(express.static('doc'))
+app.get('/api-doc',(req, res) => {
+  res.sendFile(path.join( __dirname + '/../doc/index.html'));
+})
 
 //static middleware para minha view
 app.use(express.static(__dirname + "/views"));
