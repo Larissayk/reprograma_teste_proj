@@ -9,11 +9,15 @@ const bcryptSalt = 8;
 
 //Rota/usuarios
 //alphabetic order
-exports.get = (req, res) => {
+exports.getUsuarios = (req, res) => {
   Usuarios.find()
     .sort({ nome: 1 })
     .then(resp => res.status(200).send(resp))
-    .catch(err => res.status(500).send(err));
+    .catch(err =>
+      res
+        .status(500)
+        .json({ error: "Não foi possível trazer o registro de usuários." })
+    );
 };
 
 // exports.get = (req, res) => {
@@ -58,7 +62,7 @@ exports.getUsuariosPorId = async (req, res) => {
 //POST
 
 //Rota/usuarios
-exports.post = async (req, res) => {
+exports.postUsuario = async (req, res) => {
   const { nome, email, password } = req.body;
   const salt = bcrypt.genSaltSync(bcryptSalt);
   const hashPass = await bcrypt.hashSync(password, salt);
@@ -66,13 +70,15 @@ exports.post = async (req, res) => {
   const novoUsuario = new Usuarios({
     nome,
     email,
-    password: hashPass,
+    password: hashPass
   });
 
   try {
     novoUsuario.save(function(err) {
       if (err) {
-        return res.status(500).send({ message: err });
+        return res
+          .status(500)
+          .send({ error: "Erro ao salvar o registro do usuário" });
       }
       console.log("Registro salvo!");
     });
@@ -80,7 +86,9 @@ exports.post = async (req, res) => {
       mensagem: `Usuário ${novoUsuario.nome} incluído com sucesso!`
     });
   } catch (e) {
-    return res.status(401).json({ error: "erro" });
+    return res
+      .status(400)
+      .json({ error: "Erro ao salvar o registro do usuário" });
   }
 };
 
@@ -95,11 +103,10 @@ exports.putUsuarioPorId = async (req, res) => {
     );
     if (!usuario) {
       return res.status(404).send({
-        message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
+        error: `Não foi possível localizar o usuário de ID: ${usuarioId}`
       });
     }
     res.status(200).send({
-      status: "ativo",
       mensagem: `Usuário(a) ${usuario.nome} atualizado(a) com sucesso!`
     });
   } catch (e) {
@@ -134,34 +141,19 @@ exports.putUsuarioPorId = async (req, res) => {
 // Deleto o cadastro do usuário
 //Deleto as publicações e comentários do usuário
 //Referências dessas publicações e comentários permanecem, mas não retornam nada. Isso é um problema?
+
 exports.deleteUsuarioPorId = (req, res) => {
   const usuarioId = req.params.id;
-
-  Usuarios.findByIdAndDelete({ _id: objectId(usuarioId) }).then(resp => {
-    if (resp == 0) {
-      return res
-        .status(404)
-        .send({
+  Usuarios.findByIdAndDelete({ _id: objectId(usuarioId) })
+    .then(resp => {
+      if (resp == 0) {
+        return res.status(404).send({
           message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
-        })
-        .catch(err =>
-          res.status(500).json({ error: "erro ao deletar o usuário." })
-        );
-    }
-  }),
-    Publicacoes.findOneAndDelete({ autor: { $in: objectId(usuarioId) } })
-      .then(resp => console.log("Publicação removida com sucesso!"))
-      .catch(err =>
-        res.status(500).send("Erro ao deletar a publicação do usuário.")
-      );
-
-  Comentarios.findOneAndDelete({ autor: { $in: objectId(usuarioId) } })
-    .then(resp =>
-      res
-        .status(200)
-        .send(
-          `Usuário ${usuario.nome} e seus registros foram excluídos com sucesso!`
-        )
-    )
-    .catch(err => res.status(500).json({ error: "erro" }));
+        });
+      }
+      res.status(200).send({ mensagem: "Usuário excluído com sucesso!" });
+    })
+    .catch(err =>
+      res.status(500).json({ error: "Não foi possível excluir o usuário." })
+    );
 };

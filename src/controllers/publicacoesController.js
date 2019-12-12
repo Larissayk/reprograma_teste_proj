@@ -29,23 +29,82 @@ exports.getPublicacaoPorId = (req, res) => {
 
 //Rota/publicações/:categoria
 //from the newest to the oldest
-exports.getPorCategoria = (req, res) => {
-  const categoriaPublicacao = req.params.categoria;
-  console.log(categoriaPublicacao);
-  Publicacoes.find({ categoria: categoriaPublicacao })
-    .sort({ createdAt: -1 })
-    .then(resp => {
-      if (resp == 0) {
-        return res.status(404).send({
-          message: `Não foi possível localizar publicações para a categoria ${categoriaPublicacao}.`
-        });
-      }
-      res.status(200).send(resp);
-    })
-    .catch(err => res.status(500).json({ error: erro }));
-};
+// exports.getPorCategoria = (req, res) => {
+//   const categoriaPublicacao = req.params.categoria;
+//   console.log(categoriaPublicacao);
+//   Publicacoes.find({ categoria: categoriaPublicacao })
+//     .sort({ createdAt: -1 })
+//     .then(resp => {
+//       if (resp == 0) {
+//         return res.status(404).send({
+//           message: `Não foi possível localizar publicações para a categoria ${categoriaPublicacao}.`
+//         });
+//       }
+//       res.status(200).send(resp);
+//     })
+//     .catch(err => res.status(500).json({ error: erro }));
+// };
+
+//Rota/publicações/status/:status
+//from the newest to the oldest
+// exports.getPorStatus = (req, res) => {
+//   const statusPublicacao = req.params.status;
+//   Publicacoes.find({ status: statusPublicacao })
+//     .sort({ createdAt: -1 })
+//     .then(resp => {
+//       if (resp == 0) {
+//         return res.status(404).send({
+//           message: `Não foi possível localizar publicações com status ${statusPublicacao}.`
+//         });
+//       }
+//       res.status(200).send(resp);
+//     })
+//     .catch(err => res.status(500).json({ error: erro }));
+// };
+
+//Rota/publicações/prioridade/:prioridade
+//from the newest to the oldest
+// exports.getPorPrioridade = (req, res) => {
+//   const prioridadePublicacao = req.params.prioridade;
+//   Publicacoes.find({ prioridade: prioridadePublicacao })
+//     .sort({ createdAt: -1 })
+//     .then(resp => {
+//       if (resp == 0) {
+//         return res.status(404).send({
+//           message: `Não foi possível localizar publicações de prioridade ${prioridadePublicacao}.`
+//         });
+//       }
+//       res.status(200).send(resp);
+//     })
+//     .catch(err => res.status(500).json({ error: erro }));
+// };
 
 //Rota/publicacoes/mesCriacao/:mes    (numero de 1 a 12)
+// exports.getPublicacaoPorMes = (req, res) => {
+//   const mesInicio = parseInt(req.params.mesInicial);
+//   console.log(mesInicio)
+//   const mesFim = parseInt(req.params.mesFinal);
+//   // console.log(mesPublicacao);
+//   Publicacoes.find({
+//     $expr:{ $and: {
+//       // $eq: [{ $dayOfMonth: "$createdAt" }, mesInicio],
+//       // $eq: [{ $dayOfMonth: "$createdAt" }, mesFim],
+//       $gte: [{ $dayOfMonth: "$createdAt" }, mesInicio],
+//       $lt: [{ $dayOfMonth: "$createdAt" }, mesFim]
+//     }}
+//   })
+//     .then(resp => {
+//       if (resp == 0) {
+//         return res.status(404).send({
+//           message: `Não foi possível localizar publicações para esse intervalo.`
+//         });
+//       }
+//       res.status(200).send(resp);
+//     })
+//     .catch(err => res.status(500).json({ error: "erro" }));
+// };
+
+
 exports.getPublicacaoPorMes = (req, res) => {
   const mesPublicacao = parseInt(req.params.mes);
   console.log(mesPublicacao);
@@ -86,6 +145,7 @@ exports.getPublicacaoPorDia = (req, res) => {
 };
 
 //Rota/publicações/autor/:idAutor
+//Busca por autor da publicação e filtra por categoria, status e prioridade.
 //from the newest to the oldest
 exports.getPublicacaoPorIdAutor = (req, res) => {
   const usuarioId = req.params.idAutor;
@@ -97,21 +157,34 @@ exports.getPublicacaoPorIdAutor = (req, res) => {
           message: `Não foi possível localizar publicações para esse usuário.`
         });
       }
+    });
+  Publicacoes.find(req.query)
+    .sort({ createdAt: -1 })
+    .then(resp => {
+      if (resp == 0) {
+        return res.status(404).send({
+          message: `Não foram encontrados resultados para essa busca.`
+        });
+      }
       res.status(200).send(resp);
     })
     .catch(err => res.status(500).json({ error: erro }));
 };
 
-
-  
-
 //POST
 //Rota/publicacoes/:id
 //add Post per UserId
 exports.postPorUsuario = async (req, res) => {
-
   const usuarioId = req.params.id;
-  const { titulo, descricao, categoria, status, prioridade } = req.body;
+  const {
+    titulo,
+    descricao,
+    categoria,
+    status,
+    prioridade,
+    geolocalizacao
+  } = req.body;
+  console.log(req.body);
   const publicacao = await Publicacoes.create({
     titulo,
     descricao,
@@ -125,7 +198,7 @@ exports.postPorUsuario = async (req, res) => {
     if (err) res.status(500).send(err);
 
     return console.log("Publicacao salva");
-  });;
+  });
 
   try {
     const usuarioPorId = await Usuarios.findById(usuarioId);
@@ -200,10 +273,7 @@ exports.deletePublicacaoPorId = (req, res) => {
       .then(resp =>
         res.status(200).send({ mensagem: "Publicação removida com sucesso!" })
       )
-      .catch(err =>
-        res.status(500).json({ error: "erro" })
-      );
-        
+      .catch(err => res.status(500).json({ error: "erro" }));
 };
 
 // exports.deletePublicacaoPorId = (req, res) => {

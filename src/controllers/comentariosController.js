@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 //Rota/comentarios/publicacao/:publicacaoId
 //Show the comments(from the newest to the oldest) and the post related to them
 exports.getComentariosPorPublicacao = (req, res) => {
-  const publicacaoId = req.params.postId;
+  const publicacaoId = req.params.id;
   Publicacoes.findById({ _id: objectId(publicacaoId) })
     .populate({ path: "comentarios", options: { sort: { createdAt: -1 } } })
     .then(resp => {
@@ -17,7 +17,7 @@ exports.getComentariosPorPublicacao = (req, res) => {
       }
       res.status(200).send(resp);
     })
-    .catch(err => res.status(500).json({ error: "erro" }));
+    .catch(err => res.status(500).json({ error: "Erro ao buscar os comentários." }));
 };
 
 // exports.getComentariosPorPublicacao = (req, res) => {

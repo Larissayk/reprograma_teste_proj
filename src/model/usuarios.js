@@ -36,12 +36,18 @@ usuario.save(function(error) {
   // Erro: campo email do usuário = vazio
   assert.equal(error.errors["email"].message, "Path `email` is required.");
 
+    // Erro: campo password do usuário = vazio
+  assert.equal(error.errors["password"].message, "Path `password` is required.");
+
   error = usuario.validateSync();
   // Erro: campo nome do usuário = vazio
   assert.equal(error.errors["nome"].message, "Path `nome` is required.");
 
   // Erro: campo email do usuário = vazio
   assert.equal(error.errors["email"].message, "Path `email` is required.");
+
+    // Erro: campo email do usuário = vazio
+  assert.equal(error.errors["password"].message, "Path `password` is required.");
 });
 
 // Erro: campo email do usuário = vazio

@@ -10,9 +10,10 @@ const authMiddleware = require("../middlewares/auth");
 router.get("/", controller.get);
 router.get("/mes/:mes", controller.getPublicacaoPorMes);
 router.get("/dia/:dia", controller.getPublicacaoPorDia);
-router.get("/categoria/:categoria", controller.getPorCategoria);
+// router.get("/categoria/:categoria/", controller.getPorCategoria);
+// router.get("/status/:status", controller.getPorStatus);
+// router.get("/prioridade/:prioridade", controller.getPorPrioridade);
 router.get("/autor/:idAutor", controller.getPublicacaoPorIdAutor);
-// router.get("/usuario/:nome", controller.getPublicacaoPorNomeUsuario);
 router.get("/:id", controller.getPublicacaoPorId);
 
 //Rotas POST

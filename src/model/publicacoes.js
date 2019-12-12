@@ -5,11 +5,17 @@ const publicacoesSchema = new mongoose.Schema(
     titulo: { type: String },
     descricao: { type: String },
     categoria: { type: String },
-    status: { type: String },
-    prioridade: { type: String },
-    coordenadas: {
-      type: [Number]
-     },
+    status: {
+      type: String,
+      enum: ["Ativo", "Concluído"],
+      default: "Ativo"
+    },
+    prioridade: {
+      type: String,
+      enum: ["Alta", "Média", "Baixa"],
+      default: "Média"
+    },
+    geolocalizacao: { type: [Number] },
     autor: { type: mongoose.Schema.Types.ObjectId, ref: "Usuarios" },
     comentarios: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comentarios" }]
   },

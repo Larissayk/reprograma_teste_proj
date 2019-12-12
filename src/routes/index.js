@@ -9,18 +9,18 @@ router.get("/", function(req, res) {
 
 //colocar função callback aqui !!!!
 //Rota em que estou enviando as infos de Long e Lat para o meu backend
-router.post("/teste", function(req, res) {
-  const data = req.body;
-  console.log(data)
-  const latitude = data.lat;
-  const longitude = data.long;
+// router.post("/publicacoes/post/:id", function(req, res) {
+//   const data = req.body;
+//   console.log(data)
+//   const latitude = data.lat;
+//   const longitude = data.long;
 
   
-  res.status(200).json({
-    status: "sucesso",
-    latitude: data.lat,
-    longitude: data.lon
-  });
-});
+//   res.status(200).json({
+//     status: "sucesso",
+//     latitude: latitude,
+//     longitude: longitude
+//   });
+// });
 
 module.exports = router;
