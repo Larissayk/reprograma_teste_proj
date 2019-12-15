@@ -39,6 +39,6 @@ exports.getToken = async (req, res) => {
       })
     });
   } catch (e) {
-    return res.status(401).json({ error: "error" });
+    return res.status(401).json({ error: "Acesso não autorizado."});
   }
 };

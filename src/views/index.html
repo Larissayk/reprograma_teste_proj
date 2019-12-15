@@ -30,9 +30,9 @@
         const data = {
           titulo: "Publicação maria",
           descricao: "Descrição teste",
-          categoria: "Categoria",
-          status: "Inativo",
-          prioridade: "Baixa",
+          categoria: "Casa",
+          status: "Ativo",
+          prioridade: "Alta",
           geolocalizacao: [lat, lon]
         };
         const options = {
@@ -44,7 +44,7 @@
           body: JSON.stringify(data)
         };
         const response = await fetch(
-          "/publicacoes/post/5ded54c24782da41bc8a52af",
+          "/eventos/post/5df55cdb97b9a631f8a8a28c",
           options
         );
         const jsonData = await response.json();

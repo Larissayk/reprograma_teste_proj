@@ -1,5 +1,5 @@
 const Usuarios = require("../model/usuarios");
-const Publicacoes = require("../model/publicacoes");
+const Eventos = require("../model/eventos");
 const Comentarios = require("../model/comentarios");
 const objectId = require("mongodb").ObjectID;
 const bcrypt = require("bcryptjs");
@@ -15,7 +15,7 @@ exports.getUsuarios = (req, res) => {
     .then(resp => res.status(200).send(resp))
     .catch(err =>
       res
-        .status(500)
+        .status(400)
         .json({ error: "Não foi possível trazer o registro de usuários." })
     );
 };
@@ -42,7 +42,8 @@ exports.getUsuariosPorId = async (req, res) => {
     }
     res.status(200).send(usuario);
   } catch (e) {
-    return res.status(400).json({ error: "erro" });
+    return res.status(400).json({ error: `Não foi possível localizar o usuário de ID: ${usuarioId}.`
+  });
   }
 };
 
@@ -101,7 +102,7 @@ exports.putUsuarioPorId = async (req, res) => {
       { _id: objectId(usuarioId) },
       { $set: req.body }
     );
-    if (!usuario) {
+    if (usuario == 0) {
       return res.status(404).send({
         error: `Não foi possível localizar o usuário de ID: ${usuarioId}`
       });
@@ -110,7 +111,7 @@ exports.putUsuarioPorId = async (req, res) => {
       mensagem: `Usuário(a) ${usuario.nome} atualizado(a) com sucesso!`
     });
   } catch (e) {
-    return res.status(400).json({ error: "erro" });
+    return res.status(400).json({ error: "Erro ao atualizar as informações do usuário." });
   }
 };
 

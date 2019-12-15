@@ -54,14 +54,14 @@ app.use(function(req, res, next) {
 
 // rotas
 const index = require("./routes/index");
-const usuarios = require("./routes/usuariosRoute");
-const publicacoes = require("./routes/publicacoesRoute");
-const comentarios = require("./routes/comentariosRoute");
+const usuarios = require("./routes/usuariosRoutes");
+const eventos = require("./routes/eventosRoutes");
+const comentarios = require("./routes/comentariosRoutes");
 const sessions = require("./routes/sessionRoutes");
 
 app.use("/", index);
 app.use("/usuarios", usuarios);
-app.use("/publicacoes", publicacoes);
+app.use("/eventos", eventos);
 app.use("/comentarios", comentarios);
 app.use("/sessions", sessions);
 

@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const publicacoesSchema = new mongoose.Schema(
+const eventosSchema = new mongoose.Schema(
   {
     titulo: { type: String },
     descricao: { type: String },
@@ -22,6 +22,6 @@ const publicacoesSchema = new mongoose.Schema(
   { versionKey: false, timestamps: true }
 );
 
-const Publicacoes = mongoose.model("Publicacoes", publicacoesSchema);
+const Eventos = mongoose.model("Eventos", eventosSchema);
 
-module.exports = Publicacoes;
+module.exports = Eventos;

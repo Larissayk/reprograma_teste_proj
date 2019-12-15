@@ -19,7 +19,7 @@ const usuariosSchema = new mongoose.Schema(
         "Please fill a valid email address"
       ]
     },
-    publicacoes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Publicacoes" }],
+    eventos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Publicacoes" }],
     comentarios: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comentarios" }]
   },
   { versionKey: false, timestamps: true }

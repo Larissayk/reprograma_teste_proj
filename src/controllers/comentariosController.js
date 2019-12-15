@@ -1,19 +1,19 @@
 const Comentarios = require("../model/comentarios");
 const Usuarios = require("../model/usuarios");
-const Publicacoes = require("../model/publicacoes");
+const Eventos = require("../model/eventos");
 const objectId = require("mongodb").ObjectID;
 const mongoose = require("mongoose");
 
 //GET
 //Rota/comentarios/publicacao/:publicacaoId
 //Show the comments(from the newest to the oldest) and the post related to them
-exports.getComentariosPorPublicacao = (req, res) => {
-  const publicacaoId = req.params.id;
-  Publicacoes.findById({ _id: objectId(publicacaoId) })
+exports.getComentariosPorEvento = (req, res) => {
+  const eventoId = req.params.id;
+  Eventos.findById({ _id: objectId(eventoId) })
     .populate({ path: "comentarios", options: { sort: { createdAt: -1 } } })
     .then(resp => {
       if (resp == 0) {
-        return res.status(404).send("Não foi possível encontrar a publicação");
+        return res.status(404).send("Não foi possível encontrar o evento");
       }
       res.status(200).send(resp);
     })
@@ -61,7 +61,7 @@ exports.getComentariosPorUsuario = (req, res) => {
       }
       res.status(200).send(resp);
     })
-    .catch(err => res.status(500).json({ error: "erro" }));
+    .catch(err => res.status(500).json({ error: "Erro ao buscar os comentários pelo autor." }));
 };
 
 //Show only the comments per User (newest to the oldest)
@@ -83,25 +83,25 @@ exports.getComentariosPorUsuario = (req, res) => {
 //POST
 //Rota/comentarios/post/:postId/:authorId
 //create comments by author in determined Post
-exports.postComentarioPorPublicacao = async (req, res) => {
-  const publicacaoId = req.params.postId;
+exports.postComentarioPorEvento = async (req, res) => {
+  const eventoId = req.params.postId;
   const autorId = req.params.authorId;
   const { texto } = req.body;
   const comentario = await Comentarios.create({
     texto,
     autor: autorId,
-    publicacaoRef: publicacaoId
+    publicacaoRef: eventoId
   });
 
   try {
-    const publicacaoPorId = await Publicacoes.findById(publicacaoId);
-    await publicacaoPorId.comentarios.push(comentario);
+    const eventoPorId = await Eventos.findById(eventoId);
+    await eventoPorId.comentarios.push(comentario);
 
-    publicacaoPorId.save(function(err) {
+    eventoPorId.save(function(err) {
       if (err) {
         return res.status(500).send(err);
       } 
-      console.log("Referência do comentário incluída na publicação");
+      console.log("Referência do comentário incluída no evento");
     });
   } catch (e) {
     return res.status(400).json({ error: "erro" });
@@ -118,13 +118,13 @@ exports.postComentarioPorPublicacao = async (req, res) => {
       console.log("Referência do comentário incluída no usuário.");
     });
   } catch (e) {
-    return res.status(400).json({ error: "erro1" });
+    return res.status(400).json({ error: "Erro ao incluir referência." });
   }
 
   try {
     comentario.save(function(err) {
       if (err) {
-        return res.status(500).send({ message: err });
+        return res.status(500).send({ error: "Erro ao salvar o comentário." });
       }
       console.log("The file was saved!");
     });
@@ -132,7 +132,7 @@ exports.postComentarioPorPublicacao = async (req, res) => {
       mensagem: `Comentário incluído com sucesso!`
     });
   } catch (e) {
-    return res.status(401).json({ error: "erro2" });
+    return res.status(401).json({ error: "Erro ao criar comentário" });
   }
 };
 
@@ -152,7 +152,7 @@ exports.updateComentariosPorId = (req, res) => {
       }
       res.status(200).send({ mensagem: "Comentário atualizado com sucesso!" });
     })
-    .catch(err => res.status(500).json({ error: erro }));
+    .catch(err => res.status(500).json({ error: "Erro ao atualizar o comentário." }));
 };
 
 //DELETE
@@ -168,11 +168,11 @@ exports.deleteComentariosPorId = (req, res) => {
           message: `Não foi possível localizar o comentário de ID: ${comentarioId}`
         })
         .catch(err =>
-          res.status(500).json({ error: "erro ao deletar o comentário." })
+          res.status(500).json({ error: "Erro ao deletar o comentário." })
         );
     }
   }),
-    Publicacoes.updateOne(
+    Eventos.updateOne(
       { comentarios: objectId(comentarioId) },
       { $pull: { comentarios: objectId(comentarioId) } }
     ).then(resp =>
@@ -181,7 +181,7 @@ exports.deleteComentariosPorId = (req, res) => {
         .catch(err =>
           res
             .status(500)
-            .json({ error: "erro ao atualizar a referência na publicação." })
+            .json({ error: "Erro ao atualizar a referência no evento." })
         )
     ),
     Usuarios.updateOne(
