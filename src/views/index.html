@@ -62,15 +62,15 @@
               ).textContent = pos.lng.toFixed(3);
 
               infoWindow.setPosition(pos);
-              infoWindow.setContent("Location found.");
+              infoWindow.setContent("Minha localização");
               infoWindow.open(map);
               map.setCenter(pos);
 
               //Mandando Cadastro de evento
               const data = {
-                titulo: "Publicação Pedro",
-                descricao: "Descrição teste",
-                categoria: "Casa",
+                titulo: "Praia de Pernambuco",
+                descricao: "Descrição teste" ,
+                categoria: "Contaminação costão rochoso",
                 status: "Ativo",
                 prioridade: "Alta",
                 geolocalizacao: [pos.lat, pos.lng]

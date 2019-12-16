@@ -26,7 +26,7 @@ router.post("/post/:id", controller.postEventoPorUsuario);
  */
 
 
-router.use(authMiddleware) //tudo que estiver abaixo, precisa de token.
+
 
 // Rotas GET
 router.get("/", controller.getEventos);
@@ -77,6 +77,8 @@ router.get("/", controller.getEventos);
  *       "error": "Não foi possível trazer o registro de eventos." 
  *     }
  */
+
+// router.use(authMiddleware) //tudo que estiver abaixo, precisa de token.
 
 router.get("/mes/:mes", controller.getEventoPorMes);
 /**
