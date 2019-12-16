@@ -1,6 +1,4 @@
-const Usuarios = require("../model/usuarios");
-const Eventos = require("../model/eventos");
-const Comentarios = require("../model/comentarios");
+const Usuarios = require("../models/usuarios");
 const objectId = require("mongodb").ObjectID;
 const bcrypt = require("bcryptjs");
 const bcryptSalt = 8;
@@ -20,15 +18,6 @@ exports.getUsuarios = (req, res) => {
     );
 };
 
-// exports.get = (req, res) => {
-//   Usuarios.find()
-//     .sort({ createdAt: -1 })
-//     .exec(function(err, usuarios) {
-//       if (err) res.status(500).send(err);
-//       res.status(200).send(usuarios);
-//     });
-// };
-
 //Rota/usuarios por Id
 exports.getUsuariosPorId = async (req, res) => {
   const usuarioId = req.params.id;
@@ -47,21 +36,8 @@ exports.getUsuariosPorId = async (req, res) => {
   }
 };
 
-// exports.getUsuariosPorId = (req, res) => {
-//   const usuarioId = req.params.id;
-//   Usuarios.find({ _id: usuarioId }, function(err, usuario) {
-//     if (err) return res.status(500).send(err);
-//     if (!usuario) {
-//       return res.status(404).send({
-//         message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
-//       });
-//     }
-//     res.status(200).send(usuario);
-//   });
-// };
 
 //POST
-
 //Rota/usuarios
 exports.postUsuario = async (req, res) => {
   const { nome, email, password } = req.body;
@@ -115,34 +91,9 @@ exports.putUsuarioPorId = async (req, res) => {
   }
 };
 
-// exports.putUsuarioPorId = (req, res) => {
-//   const usuarioId = req.params.id;
 
-//   Usuarios.findByIdAndUpdate(
-//     { _id: objectId(usuarioId) },
-//     { $set: req.body },
-//     function(err, usuario) {
-//       if (err) res.status(500).send(err);
-//       if (!usuario) {
-//         return res.status(404).send({
-//           message: `Não foi possível localizar o usuário de ID: ${usuarioId}`
-//         });
-//       }
-//       res.status(200).send({
-//         status: "ativo",
-//         mensagem: `Usuário(a) ${usuario.nome} atualizado(a) com sucesso!`
-//       });
-//     }
-//   );
-// };
-
-//DELETE  - FALTANDO ARRUMAR!!!!!!!
+//DELETE 
 //Rota/usuarios/delete/:id
-
-// Deleto o cadastro do usuário
-//Deleto as publicações e comentários do usuário
-//Referências dessas publicações e comentários permanecem, mas não retornam nada. Isso é um problema?
-
 exports.deleteUsuarioPorId = (req, res) => {
   const usuarioId = req.params.id;
   Usuarios.findByIdAndDelete({ _id: objectId(usuarioId) })

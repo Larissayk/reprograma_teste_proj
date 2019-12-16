@@ -1,6 +1,6 @@
-const Comentarios = require("../model/comentarios");
-const Usuarios = require("../model/usuarios");
-const Eventos = require("../model/eventos");
+const Comentarios = require("../models/comentarios");
+const Usuarios = require("../models/usuarios");
+const Eventos = require("../models/eventos");
 const objectId = require("mongodb").ObjectID;
 const mongoose = require("mongoose");
 
@@ -17,20 +17,10 @@ exports.getComentariosPorEvento = (req, res) => {
       }
       res.status(200).send(resp);
     })
-    .catch(err => res.status(500).json({ error: "Erro ao buscar os comentários." }));
+    .catch(err =>
+      res.status(500).json({ error: "Erro ao buscar os comentários." })
+    );
 };
-
-// exports.getComentariosPorPublicacao = (req, res) => {
-//   const publicacaoId = req.params.postId;
-//   Publicacoes.findById({ _id: objectId(publicacaoId) })
-//     .populate({ path: "comentarios", options: { sort: { createdAt: -1 } } })
-//     .exec(function(err, comentarios) {
-//       if (err) {
-//         return res.status(404).send(err);
-//       }
-//       res.status(200).send(comentarios);
-//     });
-// };
 
 //Show only the comments per Post
 // exports.getComentariosPorPublicacao = (req, res) => {
@@ -61,7 +51,11 @@ exports.getComentariosPorUsuario = (req, res) => {
       }
       res.status(200).send(resp);
     })
-    .catch(err => res.status(500).json({ error: "Erro ao buscar os comentários pelo autor." }));
+    .catch(err =>
+      res
+        .status(500)
+        .json({ error: "Erro ao buscar os comentários pelo autor." })
+    );
 };
 
 //Show only the comments per User (newest to the oldest)
@@ -100,7 +94,7 @@ exports.postComentarioPorEvento = async (req, res) => {
     eventoPorId.save(function(err) {
       if (err) {
         return res.status(500).send(err);
-      } 
+      }
       console.log("Referência do comentário incluída no evento");
     });
   } catch (e) {
@@ -113,8 +107,8 @@ exports.postComentarioPorEvento = async (req, res) => {
 
     autorPorId.save(function(err) {
       if (err) {
-      return res.status(500).send(err);
-      } 
+        return res.status(500).send(err);
+      }
       console.log("Referência do comentário incluída no usuário.");
     });
   } catch (e) {
@@ -152,45 +146,26 @@ exports.updateComentariosPorId = (req, res) => {
       }
       res.status(200).send({ mensagem: "Comentário atualizado com sucesso!" });
     })
-    .catch(err => res.status(500).json({ error: "Erro ao atualizar o comentário." }));
+    .catch(err =>
+      res.status(500).json({ error: "Erro ao atualizar o comentário." })
+    );
 };
 
 //DELETE
 //Rota/comentarios/delete/:id
-// Delete the comment and all its references on the User document and Post document
+// Delete the comment
 exports.deleteComentariosPorId = (req, res) => {
   const comentarioId = req.params.id;
-  Comentarios.findByIdAndDelete({ _id: objectId(comentarioId) }).then(resp => {
-    if (resp == 0) {
-      return res
-        .status(404)
-        .send({
+  Comentarios.findByIdAndDelete({ _id: objectId(comentarioId) })
+    .then(resp => {
+      if (resp == 0) {
+        return res.status(404).send({
           message: `Não foi possível localizar o comentário de ID: ${comentarioId}`
-        })
-        .catch(err =>
-          res.status(500).json({ error: "Erro ao deletar o comentário." })
-        );
-    }
-  }),
-    Eventos.updateOne(
-      { comentarios: objectId(comentarioId) },
-      { $pull: { comentarios: objectId(comentarioId) } }
-    ).then(resp =>
-      console
-        .log(resp)
-        .catch(err =>
-          res
-            .status(500)
-            .json({ error: "Erro ao atualizar a referência no evento." })
-        )
-    ),
-    Usuarios.updateOne(
-      { comentarios: objectId(comentarioId) },
-      { $pull: { comentarios: objectId(comentarioId) } }
-    ).then(resp =>
-      res
-        .status(200)
-        .send({ mensagem: "Comentário removido com sucesso!" })
-        .catch(err => res.status(500).json({ error: erro }))
+        });
+      }
+      res.status(200).send({ mensagem: "Comentário removido com sucesso!" });
+    })
+    .catch(err =>
+      res.status(500).json({ error: "Erro ao remover o comentário." })
     );
 };

@@ -1,9 +1,10 @@
-const Eventos = require("../model/eventos");
-const Usuarios = require("../model/usuarios");
+const Eventos = require("../models/eventos");
+const Usuarios = require("../models/usuarios");
+const Comentarios = require("../models/comentarios");
 const objectId = require("mongodb").ObjectID;
 
 //GET
-//Rota/publicacoes
+//Rota/eventos
 //Busca eventos e filtra por categoria, status e prioridade.
 exports.getEventos = (req, res) => {
   Eventos.find(req.query)
@@ -40,83 +41,7 @@ exports.getEventoPorId = (req, res) => {
     );
 };
 
-//Rota/publicações/:categoria
-//from the newest to the oldest
-// exports.getPorCategoria = (req, res) => {
-//   const categoriaPublicacao = req.params.categoria;
-//   console.log(categoriaPublicacao);
-//   Publicacoes.find({ categoria: categoriaPublicacao })
-//     .sort({ createdAt: -1 })
-//     .then(resp => {
-//       if (resp == 0) {
-//         return res.status(404).send({
-//           message: `Não foi possível localizar publicações para a categoria ${categoriaPublicacao}.`
-//         });
-//       }
-//       res.status(200).send(resp);
-//     })
-//     .catch(err => res.status(500).json({ error: erro }));
-// };
-
-//Rota/publicações/status/:status
-//from the newest to the oldest
-// exports.getPorStatus = (req, res) => {
-//   const statusPublicacao = req.params.status;
-//   Publicacoes.find({ status: statusPublicacao })
-//     .sort({ createdAt: -1 })
-//     .then(resp => {
-//       if (resp == 0) {
-//         return res.status(404).send({
-//           message: `Não foi possível localizar publicações com status ${statusPublicacao}.`
-//         });
-//       }
-//       res.status(200).send(resp);
-//     })
-//     .catch(err => res.status(500).json({ error: erro }));
-// };
-
-//Rota/publicações/prioridade/:prioridade
-//from the newest to the oldest
-// exports.getPorPrioridade = (req, res) => {
-//   const prioridadePublicacao = req.params.prioridade;
-//   Publicacoes.find({ prioridade: prioridadePublicacao })
-//     .sort({ createdAt: -1 })
-//     .then(resp => {
-//       if (resp == 0) {
-//         return res.status(404).send({
-//           message: `Não foi possível localizar publicações de prioridade ${prioridadePublicacao}.`
-//         });
-//       }
-//       res.status(200).send(resp);
-//     })
-//     .catch(err => res.status(500).json({ error: erro }));
-// };
-
-//Rota/publicacoes/mesCriacao/:mes    (numero de 1 a 12)
-// exports.getPublicacaoPorMes = (req, res) => {
-//   const mesInicio = parseInt(req.params.mesInicial);
-//   console.log(mesInicio)
-//   const mesFim = parseInt(req.params.mesFinal);
-//   // console.log(mesPublicacao);
-//   Publicacoes.find({
-//     $expr:{ $and: {
-//       // $eq: [{ $dayOfMonth: "$createdAt" }, mesInicio],
-//       // $eq: [{ $dayOfMonth: "$createdAt" }, mesFim],
-//       $gte: [{ $dayOfMonth: "$createdAt" }, mesInicio],
-//       $lt: [{ $dayOfMonth: "$createdAt" }, mesFim]
-//     }}
-//   })
-//     .then(resp => {
-//       if (resp == 0) {
-//         return res.status(404).send({
-//           message: `Não foi possível localizar publicações para esse intervalo.`
-//         });
-//       }
-//       res.status(200).send(resp);
-//     })
-//     .catch(err => res.status(500).json({ error: "erro" }));
-// };
-
+//Rota/eventos/mes/:mes    (numero de 1 a 12)
 exports.getEventoPorMes = (req, res) => {
   const mesEvento = parseInt(req.params.mes);
   console.log(mesEvento);
@@ -140,31 +65,7 @@ exports.getEventoPorMes = (req, res) => {
     );
 };
 
-//Rota/publicacoes/diaCriacao/:dia
-exports.getEventoPorDia = (req, res) => {
-  const diaEvento = parseInt(req.params.dia);
-  console.log(diaEvento);
-  Eventos.find({
-    $expr: {
-      $eq: [{ $dayOfMonth: "$createdAt" }, diaEvento]
-    }
-  })
-    .then(resp => {
-      if (resp == 0) {
-        return res.status(404).send({
-          message: `Não foi possível localizar eventos para o dia ${diaEvento}.`
-        });
-      }
-      res.status(200).send(resp);
-    })
-    .catch(err =>
-      res
-        .status(500)
-        .json({ error: "Não foi possível localizar eventos para esse dia." })
-    );
-};
-
-//Rota/publicações/autor/:idAutor
+//Rota/evetos/autor/:idAutor
 //Busca por autor do evento e filtra por categoria, status e prioridade.
 //from the newest to the oldest
 exports.getEventosPorIdAutor = async (req, res) => {
@@ -195,7 +96,7 @@ exports.getEventosPorIdAutor = async (req, res) => {
 };
 
 //POST
-//Rota/publicacoes/:id
+//Rota/eventos/:id
 //add Post per UserId
 exports.postEventoPorUsuario = async (req, res) => {
   const usuarioId = req.params.id;
@@ -240,21 +141,8 @@ exports.postEventoPorUsuario = async (req, res) => {
   }
 };
 
-//exports.post = (req, res) => {
-// let publicacao = new Publicacoes(req.body);
-// const id = req.params.id;
-
-// publicacao.save(function(err) {
-//   if (err) res.status(500).send(err);
-
-//   res.status(201).send({
-//     mensagem: "Post incluído com sucesso!"
-//   });
-// });
-//};
-
 //PUT
-//Rota/publicacoes/edit/:id
+//Rota/eventos/edit/:id
 exports.putEventoPorId = (req, res) => {
   const eventoId = req.params.id;
 
@@ -275,9 +163,8 @@ exports.putEventoPorId = (req, res) => {
 };
 
 //DELETE
-//Rota/publicacoes/delete/:id
-//Publicação é removida; deleta a referência da publicação no Usuário.
-//Mas os comentários da publicação apagada permanecem.
+//Rota/eventos/delete/:id
+//Evento é removida e os comentários associados a ele tb
 
 exports.deleteEventoPorId = (req, res) => {
   const eventoId = req.params.id;
@@ -293,29 +180,12 @@ exports.deleteEventoPorId = (req, res) => {
         );
     }
   }),
-    Usuarios.updateOne(
-      { eventos: objectId(eventoId) },
-      { $pull: { eventos: objectId(eventoId) } }
-    )
+    Comentarios.findOneAndDelete({ eventosRef: objectId(eventoId) })
       .then(resp =>
         res.status(200).send({ mensagem: "Evento removido com sucesso!" })
       )
-      .catch(err => res.status(500).json({ error: "erro" }));
+      .catch(err =>
+        res.status(500).json({ error: "Erro ao remover o evento." })
+      );
 };
 
-// exports.deletePublicacaoPorId = (req, res) => {
-//   const publicacaoId = req.params.id;
-//   Publicacoes.findByIdAndDelete({ _id: objectId(publicacaoId) }, function(
-//     err,
-//     publicacao
-//   ) {
-//     if (err) res.status(500).send(err);
-//     if (!publicacao) {
-//       return res.status(404).send({
-//         message: `Não foi possível localizar a publicação de ID: ${publicacaoId}`
-//       });
-//     }
-
-//     res.status(204).send("Publicação removida com sucesso!");
-//   });
-// };

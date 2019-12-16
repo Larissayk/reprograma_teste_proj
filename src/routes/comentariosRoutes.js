@@ -173,7 +173,7 @@ router.delete("/delete/:id", controller.deleteComentariosPorId);
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 500 Internal Server Error
  *     {
- *       "error": "Não foi possível excluir o comentário."
+ *       "error": "Erro ao remover o comentário."
  *     }
  */
 

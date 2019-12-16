@@ -31,7 +31,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Error-Response:",
-          "content": "HTTP/1.1 500 Internal Server Error\n{\n  \"error\": \"Não foi possível excluir o comentário.\"\n}",
+          "content": "HTTP/1.1 500 Internal Server Error\n{\n  \"error\": \"Erro ao remover o comentário.\"\n}",
           "type": "json"
         }
       ]
@@ -419,129 +419,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Error-Response:",
-          "content": "HTTP/1.1 500 Internal Server Error\n{\n  \"error\"\"error\": \"Não foi possível excluir o evento.\"\n}",
-          "type": "json"
-        }
-      ]
-    },
-    "version": "0.0.0",
-    "filename": "src/routes/eventosRoutes.js",
-    "groupTitle": "Eventos"
-  },
-  {
-    "type": "get",
-    "url": "/eventos/dia/:dia",
-    "title": "Apresenta todos os registros de eventos para o dia escolhido.",
-    "name": "GetEventoPorDia",
-    "group": "Eventos",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "Number",
-            "optional": false,
-            "field": "dia",
-            "description": "<p>Dia do mês (1 - 31).</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "ObjectID",
-            "optional": false,
-            "field": "_id",
-            "description": "<p>ID do evento.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "titulo",
-            "description": "<p>Título do evento.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "descricao",
-            "description": "<p>Breve descrição do evento.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "categoria",
-            "description": "<p>Categoria do evento.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "autor",
-            "description": "<p>Usuário que criou o evento.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "status",
-            "description": "<p>Status do evento [&quot;Ativo&quot;, &quot;Concluído&quot;] .</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "prioridade",
-            "description": "<p>Prioridade do evento [&quot;Alta&quot;, &quot;Média&quot;, &quot;Baixa&quot;].</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Date",
-            "optional": false,
-            "field": "createdAt",
-            "description": "<p>Data de criação do registro.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Date",
-            "optional": false,
-            "field": "updatedAt",
-            "description": "<p>Data da última edição do registro.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Number[]",
-            "optional": false,
-            "field": "geolocalizacao",
-            "description": "<p>Lista com as coordenadas do local onde foi gerado o evento (array de números).</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object[ref]",
-            "optional": false,
-            "field": "comentarios",
-            "description": "<p>Lista com as referência dos comentários do evento (array de objetos).</p>"
-          }
-        ]
-      },
-      "examples": [
-        {
-          "title": "Success-Response:",
-          "content": "    HTTP/1.1 200 OK\n[\n   {\n       \"_id\": \"5df443ef723c8d312c564472\",\n       \"titulo\": \"Evento 1\",\n       \"descricao\": \"Descrição teste1\",\n       \"categoria\": \"Teste\",\n       \"autor\": \"5df443ba723c8d312c564470\",\n       \"createdAt\": \"2019-12-14T02:07:43.295Z\",\n       \"updatedAt\": \"2019-12-14T02:08:40.324Z\",\n       \"status\": \"Ativo\",\n       \"prioridade\": \"Média\",\n       \"geolocalizacao\": [-23.6523345, -46.7110965],\n       \"comentarios\": [\n           \"5df44428723c8d312c564474\"\n       ]\n   }",
-          "type": "json"
-        }
-      ]
-    },
-    "error": {
-      "examples": [
-        {
-          "title": "Error-Response:",
-          "content": "HTTP/1.1 500 Internal Server Error\n{\n  \"error\": \"Não foi possível localizar eventos para esse dia.\"\n}",
+          "content": "HTTP/1.1 500 Internal Server Error\n{\n  \"error\"\"error\": \"Não foi possível remover o evento.\"\n}",
           "type": "json"
         }
       ]
@@ -806,19 +684,33 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/eventos",
-    "title": "Apresenta todos os registros de eventos.",
+    "url": "/eventos?query_key=query_value",
+    "title": "Apresenta todos os registros de eventos, que podem ser filtrados por \"status\", \"categoria\" e \"prioridade\".",
     "name": "GetEventos",
     "group": "Eventos",
     "parameter": {
       "fields": {
-        "Parameter": [
+        "query string": [
           {
-            "group": "Parameter",
-            "type": "ObjectID",
+            "group": "query string",
+            "type": "string",
             "optional": false,
-            "field": "id",
-            "description": "<p>ID único do evento.</p>"
+            "field": "status",
+            "description": "<p>Filtra os resultados pelo status (Ativo, Concluído).</p>"
+          },
+          {
+            "group": "query string",
+            "type": "string",
+            "optional": false,
+            "field": "categoria",
+            "description": "<p>Filtra os resultados pela categoria ().</p>"
+          },
+          {
+            "group": "query string",
+            "type": "string",
+            "optional": false,
+            "field": "prioridade",
+            "description": "<p>Filtra os resultados pela prioridade (Alta, Média, Baixa).</p>"
           }
         ]
       }
@@ -1021,7 +913,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/eventos/autor/:idAuthor",
-    "title": "Busca os eventos de acordo com o autor (usuário).",
+    "title": "Busca os eventos de acordo com o autor (usuário), que podem ser filtrados por \"status\", \"categoria\" e \"prioridade\".",
     "name": "getEventosPorIdAutor",
     "group": "Eventos",
     "parameter": {
@@ -1031,8 +923,31 @@ define({ "api": [
             "group": "Parameter",
             "type": "ObjectID",
             "optional": false,
-            "field": "id",
+            "field": "idAuthor",
             "description": "<p>ID único do evento.</p>"
+          }
+        ],
+        "query string": [
+          {
+            "group": "query string",
+            "type": "string",
+            "optional": false,
+            "field": "status",
+            "description": "<p>Filtra os resultados pelo status (Ativo, Concluído).</p>"
+          },
+          {
+            "group": "query string",
+            "type": "string",
+            "optional": false,
+            "field": "categoria",
+            "description": "<p>Filtra os resultados pela categoria ().</p>"
+          },
+          {
+            "group": "query string",
+            "type": "string",
+            "optional": false,
+            "field": "prioridade",
+            "description": "<p>Filtra os resultados pela prioridade (Alta, Média, Baixa).</p>"
           }
         ]
       }

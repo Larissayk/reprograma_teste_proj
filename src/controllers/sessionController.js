@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const authConfig = require("../config/auth");
-const Usuarios = require("../model/usuarios");
+const Usuarios = require("../models/usuarios");
 const bcrypt = require("bcryptjs");
 
 //função para conferir se o password para logar é o mesmo que está cadastrado

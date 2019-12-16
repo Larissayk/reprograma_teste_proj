@@ -102,52 +102,6 @@ router.get("/mes/:mes", controller.getEventoPorMes);
  *     }
  */
 
-router.get("/dia/:dia", controller.getEventoPorDia);
-/**
- * @api {get} /eventos/dia/:dia Apresenta todos os registros de eventos para o dia escolhido.
- * @apiName GetEventoPorDia
- * @apiGroup Eventos
- *
- * @apiParam {Number} dia Dia do mês (1 - 31).
- *
- * @apiSuccess {ObjectID} _id ID do evento.
- * @apiSuccess {String} titulo  Título do evento.
- * @apiSuccess {String} descricao Breve descrição do evento.
- * @apiSuccess {String} categoria  Categoria do evento.
- * @apiSuccess {String} autor  Usuário que criou o evento.
- * @apiSuccess {String} status  Status do evento ["Ativo", "Concluído"] .
- * @apiSuccess {String} prioridade  Prioridade do evento ["Alta", "Média", "Baixa"].
- * @apiSuccess {Date} createdAt Data de criação do registro.
- * @apiSuccess {Date} updatedAt  Data da última edição do registro.
- * @apiSuccess {Number[]} geolocalizacao Lista com as coordenadas do local onde foi gerado o evento (array de números).
- * @apiSuccess {Object[ref]} comentarios  Lista com as referência dos comentários do evento (array de objetos).
- *
- * @apiSuccessExample Success-Response:
- *     HTTP/1.1 200 OK
- * [
- *    {
- *        "_id": "5df443ef723c8d312c564472",
- *        "titulo": "Evento 1",
- *        "descricao": "Descrição teste1",
- *        "categoria": "Teste",
- *        "autor": "5df443ba723c8d312c564470",
- *        "createdAt": "2019-12-14T02:07:43.295Z",
- *        "updatedAt": "2019-12-14T02:08:40.324Z",
- *        "status": "Ativo",
- *        "prioridade": "Média",
- *        "geolocalizacao": [-23.6523345, -46.7110965],
- *        "comentarios": [
- *            "5df44428723c8d312c564474"
- *        ]
- *    }
- *
- * @apiErrorExample Error-Response:
- *     HTTP/1.1 500 Internal Server Error
- *     {
- *       "error": "Não foi possível localizar eventos para esse dia."
- *     }
- */
-
 // router.get("/categoria/:categoria/", controller.getPorCategoria);
 // router.get("/status/:status", controller.getPorStatus);
 // router.get("/prioridade/:prioridade", controller.getPorPrioridade);
@@ -327,7 +281,7 @@ router.delete("/delete/:id", controller.deleteEventoPorId);
  * @apiErrorExample Error-Response:
  *     HTTP/1.1 500 Internal Server Error
  *     {
- *       "error""error": "Não foi possível excluir o evento."
+ *       "error""error": "Não foi possível remover o evento."
  *     }
  */
 
