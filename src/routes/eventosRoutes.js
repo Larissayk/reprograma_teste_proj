@@ -3,8 +3,30 @@ const router = express.Router();
 const controller = require("../controllers/eventosController");
 const authMiddleware = require("../middlewares/auth");
 
+//Rotas POST
+router.post("/post/:id", controller.postEventoPorUsuario);
+/**
+ * @api {post} /eventos/post/:id Request User information
+ * @apiName PostEventoPorUsuario
+ * @apiGroup Eventos
+ *
+ * @apiParam {ObjectID} id ID único do evento.
+ *
+ * @apiSuccessExample Success-Response:
+ *     HTTP/1.1 200 OK
+ *     {
+ *       " message": "Evento incluído com sucesso!"
+ *     }
+ *
+ * @apiErrorExample Error-Response:
+ *     HTTP/1.1 500 Internal Server Error
+ *     {
+ *       "error": "Erro ao criar o evento." 
+ *     }
+ */
 
-// router.use(authMiddleware) //tudo que estiver abaixo, precisa de token.
+
+router.use(authMiddleware) //tudo que estiver abaixo, precisa de token.
 
 // Rotas GET
 router.get("/", controller.getEventos);
@@ -102,9 +124,6 @@ router.get("/mes/:mes", controller.getEventoPorMes);
  *     }
  */
 
-// router.get("/categoria/:categoria/", controller.getPorCategoria);
-// router.get("/status/:status", controller.getPorStatus);
-// router.get("/prioridade/:prioridade", controller.getPorPrioridade);
 router.get("/autor/:idAuthor", controller.getEventosPorIdAutor);
 /**
  * @api {get} /eventos/autor/:idAuthor Busca os eventos de acordo com o autor (usuário), que podem ser filtrados por "status", "categoria" e "prioridade".
@@ -214,28 +233,6 @@ router.get("/:id", controller.getEventoPorId);
  *     HTTP/1.1 400 Bad Request
  *     {
  *       "error": "Não foi possível localizar o evento."
- *     }
- */
-
-//Rotas POST
-router.post("/post/:id", controller.postEventoPorUsuario);
-/**
- * @api {post} /eventos/post/:id Request User information
- * @apiName PostEventoPorUsuario
- * @apiGroup Eventos
- *
- * @apiParam {ObjectID} id ID único do evento.
- *
- * @apiSuccessExample Success-Response:
- *     HTTP/1.1 200 OK
- *     {
- *       " message": "Evento incluído com sucesso!"
- *     }
- *
- * @apiErrorExample Error-Response:
- *     HTTP/1.1 500 Internal Server Error
- *     {
- *       "error": "Erro ao criar o evento." 
  *     }
  */
 

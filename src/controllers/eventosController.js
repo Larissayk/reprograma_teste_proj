@@ -134,10 +134,10 @@ exports.postEventoPorUsuario = async (req, res) => {
     await usuarioPorId.save(function(err) {
       if (err) res.status(500).send(err);
 
-      return res.status(201).send({ message: "Evento incluído com sucesso!" });
+      return res.status(201).send({ message: "Evento incluído com sucesso!", evento });
     });
   } catch (e) {
-    return res.status(400).json({ error: "erro" });
+    return res.status(400).json({ error: "Erro ao criar o evento." });
   }
 };
 

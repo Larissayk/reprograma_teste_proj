@@ -2,56 +2,119 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <title>My App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 60%;
+        width: 60%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html,
+      body {
+        height: 100%;
+        margin: 2%;
+        padding: 0;
+      }
+    </style>
   </head>
   <body>
-    <h1>Pegar Geolocalização</h1>
+    <!-- Header Menu. Note use of headerCtrl -->
+    <div class="header" ng-controller="headerCtrl">
+      <!-- Header Title -->
+      <h1 class="text-muted">reprograma-Meli_ProjFinal_API</h1>
+    </div>
+
+    <div id="map"></div>
+    <h3>Pegar Geolocalização</h3>
 
     <p>
       latitude: <span id="latitude" name="latitude"></span>&deg;<br />
       longitude: <span id="longitude" name="longitude"></span>&deg;<br />
     </p>
-  </body>
 
-  <script>
-    if ("geolocation" in navigator) {
-      console.log("Geolocalização está disponível");
-      navigator.geolocation.getCurrentPosition(async position => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
+    <script>
+      // Google Maps
+      var map, infoWindow;
+      async function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: -34.397, lng: 150.644 },
+          zoom: 8
+        });
+        infoWindow = new google.maps.InfoWindow();
 
-        document.getElementById("latitude").textContent = lat;
-        document.getElementById("longitude").textContent = lon;
+        // HTML5 geolocation.
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async function(position) {
+              var pos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+              };
+              document.getElementById("latitude").textContent = pos.lat.toFixed(
+                3
+              );
+              document.getElementById(
+                "longitude"
+              ).textContent = pos.lng.toFixed(3);
 
-        //console.log(position);
-        //const data = {lat, lon};
-        const data = {
-          titulo: "Publicação maria",
-          descricao: "Descrição teste",
-          categoria: "Casa",
-          status: "Ativo",
-          prioridade: "Alta",
-          geolocalizacao: [lat, lon]
-        };
-        const options = {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
-          },
-          body: JSON.stringify(data)
-        };
-        const response = await fetch(
-          "/eventos/post/5df55cdb97b9a631f8a8a28c",
-          options
+              infoWindow.setPosition(pos);
+              infoWindow.setContent("Location found.");
+              infoWindow.open(map);
+              map.setCenter(pos);
+
+              //Mandando Cadastro de evento
+              const data = {
+                titulo: "Publicação Pedro",
+                descricao: "Descrição teste",
+                categoria: "Casa",
+                status: "Ativo",
+                prioridade: "Alta",
+                geolocalizacao: [pos.lat, pos.lng]
+              };
+
+              const options = {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Access-Control-Allow-Origin": "*"
+                },
+                body: JSON.stringify(data)
+              };
+              const response = await fetch(
+          "/eventos/post/5df443ba723c8d312c564470",
+                options
+              );
+              const jsonData = await response.json();
+              console.log(jsonData);
+            },
+            function() {
+              handleLocationError(true, infoWindow, map.getCenter());
+            }
+          );
+        } else {
+          // Browser doesn't support Geolocation
+          handleLocationError(false, infoWindow, map.getCenter());
+        }
+      }
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+        infoWindow.setPosition(pos);
+        infoWindow.setContent(
+          browserHasGeolocation
+            ? "Error: The Geolocation service failed."
+            : "Error: Your browser doesn't support geolocation."
         );
-        const jsonData = await response.json();
-        console.log(jsonData);
-      });
-    } else {
-      console.log("Geolocalização não está disponível");
-    }
-  </script>
+        infoWindow.open(map);
+      }
+    </script>
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAIS2Q0ct_5mI_DWkXTwCkhSJD7eDNoeNM&callback=initMap"
+    ></script>
+  </body>
 </html>

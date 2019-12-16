@@ -30,7 +30,7 @@ router.post("/", controller.postUsuario);
  *     }
  */
 
-// router.use(authMiddleware) //tudo que estiver abaixo, precisa de token.
+router.use(authMiddleware) //tudo que estiver abaixo, precisa de token.
 
 // Rotas GET
 router.get("/", controller.getUsuarios);
