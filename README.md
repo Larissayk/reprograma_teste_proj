@@ -1,4 +1,6 @@
-# reprograma-Meli_ProjFinal_API
+# SOS Meio Ambiente API
+
+## reprograma-Meli_ProjFinal_API
 Backend bootcamp {reprograma} Final project. This is the first version of a project which consists in a basic communication system, where is possible to create events and add comments to it. The differencial here is that all the events can be tracked by the position of when it was created. And this information can be used for analysis of distribution on a map. 
 
 ## Getting Started
@@ -43,7 +45,7 @@ npm run dev
 
 ## API Documentation
 
-The complete documentation can be accessed on the main page "/"
+* [SOSMeioAmbienteAPI](https://sos-meio-ambiente-api.herokuapp.com/api-doc) - on Heroku
 
 ## Authors
 
