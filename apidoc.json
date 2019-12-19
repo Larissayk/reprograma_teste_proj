@@ -1,7 +1,7 @@
 {
-    "name": "example",
+    "name": "apiDoc SOS Meio Ambiente API",
     "version": "0.1.0",
-    "description": "apiDoc basic example",
-    "title": "Custom apiDoc browser title",
-    "url" : "https://api.github.com/v1"
+    "description": "Projeto de conclusão do curso de backend da Reprograma, com parceria do Mercado Livre.",
+    "title": "apiDoc SOS Meio Ambiente API",
+    "url" : ""
   }

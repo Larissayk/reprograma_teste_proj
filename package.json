@@ -32,5 +32,14 @@
   "devDependencies": {
     "nodemon": "^1.19.4"
   },
-  "description": ""
+  "description": "",
+  "apidoc": {
+    "name": "reprograma-Meli_ProjFinal_API",
+    "version": "0.1.0",
+    "description": "Projeto de conclusão do curso de backend da Reprograma, com parceria do Mercado Livre.",
+    "apidoc": {
+      "title": "apiDoc SOS Meio Ambiente API",
+      "url": "https://sos-meio-ambiente-api.herokuapp.com/"
+    }
+  }
 }
