@@ -821,7 +821,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/eventos/post/:id",
-    "title": "Request User information",
+    "title": "Adicione um Evento relacionado ao usuário logado",
     "name": "PostEventoPorUsuario",
     "group": "Eventos",
     "parameter": {
