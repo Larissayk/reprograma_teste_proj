@@ -6,7 +6,7 @@ const authMiddleware = require("../middlewares/auth");
 //Rotas POST
 router.post("/post/:id", controller.postEventoPorUsuario);
 /**
- * @api {post} /eventos/post/:id Adicione um Evento relacionado ao usuário logado
+ * @api {post} /eventos/post/:id Adicione um Evento relacionado ao usuário logado. Por enquanto a geolocalização só está sendo adquirida e passada quando o cadastro é feito pelo frontEnd (passei o body da requisição pelo código no index.html)
  * @apiName PostEventoPorUsuario
  * @apiGroup Eventos
  *
