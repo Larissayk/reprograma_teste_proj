@@ -6,7 +6,7 @@ const authMiddleware = require("../middlewares/auth");
 //Rotas POST
 router.post("/post/:id", controller.postEventoPorUsuario);
 /**
- * @api {post} /eventos/post/:id Request User information
+ * @api {post} /eventos/post/:id Adicione um Evento relacionado ao usuário logado
  * @apiName PostEventoPorUsuario
  * @apiGroup Eventos
  *
