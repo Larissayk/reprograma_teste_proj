@@ -32,20 +32,8 @@
   "devDependencies": {
     "nodemon": "^1.19.4"
   },
-<<<<<<< HEAD
-  "description": "",
-  "apidoc": {
-    "name": "reprograma-Meli_ProjFinal_API",
-    "version": "0.1.0",
-    "description": "Projeto de conclusão do curso de backend da Reprograma, com parceria do Mercado Livre.",
-    "apidoc": {
-      "title": "apiDoc SOS Meio Ambiente API",
-      "url": "https://sos-meio-ambiente-api.herokuapp.com/"
-    }
-=======
   "description": "Backend bootcamp {reprograma} Final project. This is the first version of a project which consists in a basic communication system, where is possible to create events and add comments to it. The differencial here is that all the events can be tracked by the position of when it was created. And this information can be used for analysis of distribution on a map.",
   "directories": {
     "doc": "doc"
->>>>>>> de46c2673653530625c694bf003a2549f3b55021
   }
 }
