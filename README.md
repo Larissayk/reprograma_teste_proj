@@ -47,6 +47,11 @@ npm run dev
 
 * [SOSMeioAmbienteAPI](https://sos-meio-ambiente-api.herokuapp.com/api-doc) - on Heroku
 
+## Observations
+
+This API is still under development, so if you find some problem in rendering the map, maybe you'll need to generate your own [APIKEY] (https://developers.google.com/maps/documentation/javascript/get-api-key)
+
+
 ## Authors
 
 * **Larissa Yukie Kido** - *Final Project {reprograma} - backend bootcamp* - [reprograma-Meli_ProjFinal_API](https://github.com/Larissayk/reprograma-Meli_ProjFinal_API)
