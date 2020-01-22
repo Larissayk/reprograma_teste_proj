@@ -49,7 +49,8 @@ npm run dev
 
 ## Observations
 
-This API is still under development, so if you find some problem in rendering the map, maybe you'll need to generate your own [APIKEY](https://developers.google.com/maps/documentation/javascript/get-api-key)
+This API is still under development, so if you find some problem in rendering the map, maybe you'll need to generate your own [APIKEY](https://developers.google.com/maps/documentation/javascript/get-api-key).
+The Geolocation functionality works only through the clientside, so to show this functionality, the POST method for Events is being made in a "static" way through my index.html file.
 
 ## Authors
 
