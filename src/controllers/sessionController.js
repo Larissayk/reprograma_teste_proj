@@ -15,8 +15,8 @@ function checarPassword(passwordEntry, password) {
 
 //Rota GetToken (se a senha de login do usuário for válida, libera token de acesso)
 exports.getToken = async (req, res) => {
-  const { nomeUsuario, password: passwordEntry } = req.body;
-  const usuario = await Usuarios.findOne({nome: nomeUsuario});
+  const { usuarioNome, password: passwordEntry } = req.body;
+  const usuario = await Usuarios.findOne({ nome: usuarioNome });
 
   if (!usuario) {
     return res.status(401).json({ error: "Usuário não encontrado!" });

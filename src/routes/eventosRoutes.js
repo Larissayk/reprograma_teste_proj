@@ -78,7 +78,7 @@ router.get("/", controller.getEventos);
  *     }
  */
 
-// router.use(authMiddleware) //tudo que estiver abaixo, precisa de token.
+router.use(authMiddleware) //tudo que estiver abaixo, precisa de token.
 
 router.get("/mes/:mes", controller.getEventoPorMes);
 /**
