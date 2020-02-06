@@ -29,12 +29,39 @@
     </div>
 
     <div id="map"></div>
-    <h3>Pegar Geolocalização</h3>
+    <h3>Postar Evento com Geolocalização</h3>
 
-    <p>
-      latitude: <span id="latitude" name="latitude"></span>&deg;<br />
-      longitude: <span id="longitude" name="longitude"></span>&deg;<br />
-    </p>
+    <form>
+      Título:<br />
+      <input style="margin-bottom:10px" type="text" id="titulo" name="titulo" />
+      <br />
+      Descrição:<br />
+      <input
+        style="margin-bottom:10px"
+        type="text"
+        id="descricao"
+        name="descricao"
+      />
+      <br />
+      Categoria:<br />
+      <input
+        style="margin-bottom:10px"
+        type="text"
+        id="categoria"
+        name="categoria"
+      />
+      <br />
+      Status:<br />
+      <input style="margin-bottom:10px" type="text" id="status" name="status" />
+      <br />
+      Prioridade:<br />
+      <input type="text" id="prioridade" name="prioridade" />
+      <p>
+        Latitude: <span id="latitude" name="latitude"></span>&deg;<br />
+        Longitude: <span id="longitude" name="longitude"></span>&deg;<br />
+      </p>
+      <input type="submit" value="Submit" />
+    </form>
 
     <script>
       // Google Maps
@@ -66,30 +93,38 @@
               infoWindow.open(map);
               map.setCenter(pos);
 
-              //Mandando Cadastro de evento
-              const data = {
-                titulo: "Praia de Pernambuco",
-                descricao: "Descrição teste" ,
-                categoria: "Contaminação costão rochoso",
-                status: "Ativo",
-                prioridade: "Alta",
-                geolocalizacao: [pos.lat, pos.lng]
-              };
+              // //Pegando valores dos inputs
+              // const titulo = document.getElementById("titulo").value;
+              // const descricao = document.getElementById("descricao").value;
+              // const categoria = document.getElementById("categoria").value;
+              // const status = document.getElementById("status").value;
+              // const prioridade = document.getElementById("prioridade").value;
+              // console.log(titulo.value);
 
-              const options = {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  "Access-Control-Allow-Origin": "*"
-                },
-                body: JSON.stringify(data)
-              };
-              const response = await fetch(
-          "/eventos/post/5df443ba723c8d312c564470",
-                options
-              );
-              const jsonData = await response.json();
-              console.log(jsonData);
+              // //Mandando Cadastro de evento
+              // const data = {
+              //   titulo: document.getElementById("titulo").value,
+              //   descricao: descricao ,
+              //   categoria: categoria,
+              //   status: status,
+              //   prioridade: prioridade,
+              //   geolocalizacao: [pos.lat, pos.lng]
+              // };
+
+              // console.log(data)
+
+              // const options = {
+              //   method: "POST",
+              //   headers: {
+              //     "Content-Type": "application/json",
+              //     "Access-Control-Allow-Origin": "*"
+              //   },
+              //   body: JSON.stringify(data)
+              // };
+
+              postEvento();
+              // const jsonData = await response.json();
+              // console.log(jsonData);
             },
             function() {
               handleLocationError(true, infoWindow, map.getCenter());
@@ -111,9 +146,60 @@
         infoWindow.open(map);
       }
     </script>
+    <script>
+      function postEvento() {
+        const Form = document.querySelector("form");
+        const formCalculator = Form.addEventListener("submit", event => {
+          event.preventDefault();
+
+          //Pegando valores dos inputs
+          const titulo = document.getElementById("titulo").value;
+          const descricao = document.getElementById("descricao").value;
+          const categoria = document.getElementById("categoria").value;
+          const status = document.getElementById("status").value;
+          const prioridade = document.getElementById("prioridade").value;
+          console.log(titulo.value);
+
+          //Mandando Cadastro de evento
+          const data = {
+            titulo: titulo,
+            descricao: descricao,
+            categoria: categoria,
+            status: status,
+            prioridade: prioridade,
+            geolocalizacao: [
+              (document.getElementById(
+                "latitude"
+              ).textContent),
+              (document.getElementById(
+                "latitude"
+              ).textContent)
+            ]
+          };
+          console.log(data);
+
+          const options = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*"
+            },
+            body: JSON.stringify(data)
+          };
+
+          const response = fetch(
+            "/eventos/post/5df443ba723c8d312c564470",
+            options
+          );
+          const jsonData = response.json();
+          console.log(jsonData);
+        });
+      }
+    </script>
     <script
       async
       defer
-       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIEOuFK4m3ljAcwkCUFIVJbMNLbIBZAAg&callback=initMap"></script>
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIEOuFK4m3ljAcwkCUFIVJbMNLbIBZAAg&callback=initMap"
+    ></script>
   </body>
 </html>
