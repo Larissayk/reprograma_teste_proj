@@ -27,10 +27,10 @@
     "joigoose": "^4.0.8",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.12",
-    "pug": "^2.0.4"
+    "pug": "^3.0.2"
   },
   "devDependencies": {
-    "nodemon": "^1.19.4"
+    "nodemon": "^2.0.7"
   },
   "description": "Backend bootcamp {reprograma} Final project. This is the first version of a project which consists in a basic communication system, where is possible to create events and add comments to it. The differencial here is that all the events can be tracked by the position of when it was created. And this information can be used for analysis of distribution on a map.",
   "directories": {
